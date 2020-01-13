@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="libraries/jquery-ui.structure.css">
+    <link rel="stylesheet" href="libraries/jquery-ui.css">
+    <link rel="stylesheet" href="libraries/jquery-ui.theme.css">
+    <link rel= "stylesheet" href="mxPlanning CSS/pageStyling.css">
+</head>
+<body onload="initialLoading()">
+    <section id="pageContainer">
+        <section id="titleDisplay">
+            Maintenance Planning Tool
+        </section>
+        <section id="leftInfoPanel">
+                <section id="mxEventsOnDate">
+                    Test
+                </section>
+                <section id="bunoConfigInfo">
+                    Test
+                </section>
+                <section id="bunoMXInfo">
+                    Test
+                </section>
+        </section>
+        <section id="kpiFilterDisplay">
+            <section id="SQDImageKPIs">
+                <section id="SQDImageContainer">
+                    <img id="SQDImage" src="sqdImages/f18.jpg">
+                </section>
+                <section id="topKPIrow">
+                    <section id="sqdDropdown">
+                        <select id="squadronSelect" onchange="switchSquadron()">
+                            <option value="" disabled="disabled" selected="selected"> Please Select a Squadron</option>
+                        </select>
+                    </section>
+                    <section id="kpiOne">
+                        Test
+                    </section>
+                    <section id="kpiTwo">
+                        Test
+                    </section>
+                </section>
+                <section id="bottomKPIrow">
+                    <section id="kpiThree">
+                        Test
+                    </section>
+                    <section id="kpiFour">
+                        Test
+                    </section>
+                    <section id="kpiFive">
+                        TEst
+                    </section>
+                </section>
+            </section>
+            <section id="filters">
+                Test
+            </section>
+        </section>
+        <section id="mxDisplay">
+                <section id="detDisplay">
+                    DetDisplay
+                </section>
+                <section id="calendarDisplay">
+                    <section id="labelAndDate">
+                        <div id="bunoLabel">
+                        <br>
+                            BUNO
+                        </div>
+                    </section>
+                    <section id="bunosAndMx">
+                            BUNOs and MX
+                    </section>
+                </section>
+        </section>
+    </section>
+</body>
+<script src="scripts/onloadScripts.js"></script>
+<script src="libraries/jQuery.js"></script>
+<script src="libraries/jquery-ui.js"></script>
+<script src="scripts/dataManagementScripts.js"></script>
+<script src="libraries/moment.min.js"></script>
+</html>

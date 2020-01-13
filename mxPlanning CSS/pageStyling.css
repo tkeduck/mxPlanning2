@@ -1,0 +1,245 @@
+html, body{
+    height: 100%;
+}
+
+body{
+    border: solid ;
+    min-height: 100%;
+    margin:0px;
+    border-width: thick;
+
+}
+
+
+/*
+This portion outlays the major sections of the homepage
+ */
+
+#pageContainer{
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: 25px 1fr 2fr;
+    grid-template-areas: "titleDisplay titleDisplay"
+                        "leftInfoPanel kpiFilterDisplay"
+                        "leftInfoPanel mxDisplay";
+    margin: 0px;
+    height: 100%;
+}
+
+#titleDisplay{
+    background-color: #454545;
+    grid-area: titleDisplay;
+    color: white;
+    text-align: center;
+    border: solid #909090;
+}
+
+
+/*
+Below is the left information panel styling
+*/
+/*<editor-fold>*/
+
+#leftInfoPanel{
+    background-color: #454545;
+    grid-area: leftInfoPanel;
+    grid-template-rows: 2fr 1fr 1fr;
+    grid-template-areas: "mxEventsOnDate"
+                          "bunoConfigInfo"
+                          "bunoMXInfo";
+    min-width: 400px;
+    min-height: 500px;
+    height: 100%;
+    display: grid;
+    border: solid #909090;
+}
+#mxEventsOnDate{
+    grid-area: mxEventsOnDate;
+    background-color: #454545;
+    min-height: 350px;
+}
+#bunoConfigInfo{
+    grid-area: bunoConfigInfo;
+    background-color: #454545;
+    min-height: 200px;
+}
+#bunoMXInfo{
+    grid-area: bunoMXInfo;
+    background-color: #454545;
+    min-height: 200px;
+
+}
+/*</editor-fold>*/
+
+
+/*
+Below is the KPI & Filter display styling
+ */
+/*<editor-fold>*/
+#kpiFilterDisplay{
+    background-color: #454545;
+    grid-area: kpiFilterDisplay;
+    min-height: 350px;
+    display: grid;
+    grid-template-areas: "SQDImageKPIs"
+                        "filters";
+    grid-template-rows: 4fr 1fr;
+    border: solid;
+    border-color: #909090;
+}
+/*
+Area for the KPIs and SQD Image
+ */
+
+#SQDImageKPIs{
+    grid-area: SQDImageKPIs;
+    background-color: #454545;
+    display: grid;
+    grid-template-areas: "SQDImage topKPIrow"
+                        "SQDImage bottomKPIrow";
+    grid-template-columns: 1fr 4fr;
+}
+
+#SQDImageContainer{
+    grid-area: SQDImage;
+}
+#SQDImage{
+    height: 100%;
+    width: 100%;
+}
+/*
+Top KPIs
+ */
+/*<editor-fold>*/
+#topKPIrow{
+    grid-area: topKPIrow;
+    background-color: #454545;
+    display: grid;
+    grid-template-areas: "sqdDropdown kpiOne kpiTwo";
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+#sqdDropdown{
+    grid-area: sqdDropdown;
+    background-color: #454545;
+}
+
+#kpiOne{
+    grid-area: kpiOne;
+    background-color: #454545;
+}
+#kpiTwo{
+    grid-area: kpiTwo;
+    background-color: #454545;
+}
+
+#squadronSelect{
+    height: 100%;
+    width: 100%;
+    background-color: #454545;
+}
+/* </editor-fold>*/
+/*
+Bottom KPIs
+ */
+/*<editor-fold>*/
+#bottomKPIrow{
+    grid-area: bottomKPIrow;
+    background-color: #454545;
+    display: grid;
+    grid-template-areas: "kpiThree kpiFour kpiFive";
+}
+#kpiThree{
+    grid-area: kpiThree;
+    background-color: #454545;
+}
+
+#kpiFour{
+    grid-area: kpiFour;
+    background-color: #454545;
+}
+
+#kpiFive{
+    grid-area: kpiFive;
+    background-color: #454545;
+}
+
+#filters{
+    grid-area: filters;
+    background-color: #454545;
+    border: solid #909090;
+}
+
+
+/*</editor-fold>*/
+
+/*</editor-fold>*/
+
+
+/*
+Maintenance Display- Includes the calendar, bunos and DET display
+ */
+/*<editor-fold>*/
+#mxDisplay{
+    grid-area: mxDisplay;
+    background-color: #454545;
+    min-height: 400px;
+    display: grid;
+    grid-template-areas: "detDisplay"
+                        "calendarDisplay";
+    grid-template-rows: 1fr 5fr;
+}
+
+#detDisplay{
+    grid-area: detDisplay;
+    background-color:#454545;
+    border: solid #909090;
+}
+
+/*
+Styling for the calendar including Dates,BUNOs and Calendar Elements
+ */
+/* <editor-fold>*/
+#calendarDisplay{
+    grid-area: calendarDisplay;
+    background-color:#454545;
+    display: grid;
+    grid-template-areas: "labelAndDate"
+                        "bunosAndMx";
+    grid-template-rows: 75px 1fr;
+    border: solid;
+    border-color: #909090;
+}
+
+#labelAndDate{
+    grid-area: labelAndDate;
+    background-color: #454545 ;
+    display: flex;
+    overflow-y: scroll;
+}
+
+.dateLabels{
+    min-width: 75px;
+    background-color: #454545;
+    border: solid;
+    display: flex;
+    text-align: center;
+}
+
+#bunoLabel{
+    background-color:#454545;
+    color: white;
+    width: 50px;
+    border: solid;
+    border-color: black;
+    text-align: center;
+}
+#bunosAndMx{
+    grid-area: bunosAndMx;
+    background-color:#454545;
+}
+
+
+/*</editor-fold>*/
+
+/*</editor-fold>*/
