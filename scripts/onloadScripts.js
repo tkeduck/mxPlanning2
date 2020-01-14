@@ -33,10 +33,14 @@ addDates populates the date labels, 3 days behind and 35 days ahead
  */
 function addDateLabels(){
     let todayDate = moment().add(-3,'days').format("MM/DD");
-    let weekdayName = moment(todayDate).format('dddd');
-    for(i=-2; i<36; ++i){
-        $('#labelAndDate').append('<div id= '+todayDate+' class="dateLabels">'+weekdayName+'<br>'+todayDate+'</div>');
-        todayDate = moment().add(i,'days').format('MM/DD')
+    let weekdayName = moment().add(-3,'days').format('dddd');
+    for(i=-2; i<37; ++i){
+        $('#dateContainter').append('<span id= '+todayDate+' class="dateLabels">'+weekdayName+'<br>'+todayDate+'</span>');
+        if(i==36){
+            $('#dateContainter').append('<br>')
+        }
+        todayDate = moment().add(i,'days').format('MM/DD');
+        weekdayName = moment().add(i, 'days').format('dddd');
     }
 
 

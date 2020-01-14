@@ -204,12 +204,16 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
     grid-area: calendarDisplay;
     background-color:#454545;
     display: grid;
-    grid-template-areas: "labelAndDate"
-                        "bunosAndMx";
-    grid-template-rows: 75px 1fr;
+    grid-template-areas: "bunoLabel bunosAndMx"
+                        "bunoLabel bunosAndMx";
+    grid-template-rows: 50px 4fr;
+    grid-template-columns: 100px 1fr;
     border: solid;
     border-color: #909090;
 }
+
+
+
 
 #labelAndDate{
     grid-area: labelAndDate;
@@ -219,26 +223,81 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
 }
 
 .dateLabels{
-    min-width: 75px;
+
+    min-width: 100px;
+    max-width: 100px;
     background-color: #454545;
     border: solid;
-    display: flex;
+    display: inline-block;
     text-align: center;
 }
 
 #bunoLabel{
+    grid-area: bunoLabel;
     background-color:#454545;
     color: white;
-    width: 50px;
+    min-width: 100px;
+    height: 50px;
     border: solid;
     border-color: black;
     text-align: center;
 }
+
+.bunoCalendarElement{
+
+    color: white;
+    height: 50px;
+    width: 100px;
+    border: solid;
+    border-color:black;
+    display: inline-block;
+    text-align: center;
+    background-color: #454545;
+    border-radius: 25px;
+}
+.mxWindow{
+    color: white;
+    height: 50px;
+    width: 100px;
+    border: solid;
+    border-color:black;
+    display: inline-block;
+    text-align: center;
+   background-color: #f1a899;
+
+
+}
+.mc{
+    color: white;
+    height: 50px;
+    width: 100px;
+    background-color: darkgreen;
+    border: solid;
+    border-color:black;
+
+    display: inline-block;
+    text-align: center;
+}
 #bunosAndMx{
     grid-area: bunosAndMx;
-    background-color:#454545;
-}
+    background-color: #454545;
+    display: inline-block;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    white-space: nowrap;
 
+}
+.maintenance{
+    color: white;
+    height: 50px;
+    width: 100px;
+    background-color: tomato;
+    border: solid;
+    border-color:black;
+
+    display: inline-block;
+    text-align: center;
+}
 
 /*</editor-fold>*/
 
