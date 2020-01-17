@@ -135,7 +135,9 @@ function calendarQuery(){
                     axis: 'x',
                     placeholder: 'sortable-placeholder',
                     revert: true,
-
+                    //activate: function(event, ui){dragFunction(ui.item.attr('id'))},
+                    //start: function(event, ui){dragFunction(ui.item.attr('id'))}
+                    //stop:  function(event, ui){dragFunction(ui.item.attr('id'))}
                 });
             }else {
                 $('#' + currentBuno).append(calendarEleHTML);
@@ -145,8 +147,30 @@ function calendarQuery(){
      }
  }
 
- function dragFunction(){
-    console.log('drag')
+ function dragFunction(idName){
+     //console.log(idName);
+     //let output = $('#'+idName+':first-child').attr('id')
+     //$('#'+idName).siblings('#735914Day8').css('background-color','red');
+     let output = $('#'+idName).siblings();
+     //console.log(output[0].id);
+     for(i=0;i<6;++i){
+         let nameToTest = output[i].id;
+         //console.log(output[5].id)
+         console.log(nameToTest)
+         /*
+         if(nameToTest == idName){
+             console.log(nameToTest);
+             console.log(idName)
+             console.log(output)
+             //console.log(i);
+             //console.log(output[i].id);
+             //console.log(output[i])
+             //console.log(output)
+         }*/
+     }
+
+
+
  }
 
 
