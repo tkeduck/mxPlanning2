@@ -66,7 +66,7 @@ function calendarQuery(){
          //Converting the maintenance due date into a window start date in order to rend to the calendar
          for(k=2; k<12; ++k){
              let mxItemDueDate = inputArray[i][k];
-             let mxWindowStart = moment(mxItemDueDate).add(-3, 'days').format('MM/DD/YYYY');
+             let mxWindowStart = moment(mxItemDueDate).add(-4, 'days').format('MM/DD/YYYY');
               mxWindowStartArray.push(mxWindowStart)
          }
          //cycling through the amount of days in order to determine if MC or NMC or MC-MX
@@ -75,27 +75,39 @@ function calendarQuery(){
          let calendarEleLabel = 'MC';
          for(j=-3; j<36; ++j){
              currentDateMXItems=[];
+             let lastElement = false;
              for(l = 0; l<11; ++l){
                  if(mxWindowStartArray[l] == currentDate){
                      currentDateMXItems.push(l);
 
                 }
             }
-             //Need to allow for several differnt classes, planes are either MC or NMC based upon their required mainte
+             //Need to allow for several different classes, planes are either MC or NMC based upon their required mainte
              // requirement for that day there is +-3 days from the due date to get the mainteance done so this is the
              // mx window, need to allow them to move the maintenance event around in that window to allow for planning
             if(currentDateMXItems.length >0){
                  calendarEleClass = 'mxWindow';
                  calendarEleLabel = 'MX Window';
                  mxWindowCounter = 6;
-            }else if(mxWindowCounter==4||mxWindowCounter==3||mxWindowCounter==2){
+                $('#'+currentBuno).append('<span id="'+currentBuno+'MxWindow"></span>');
+            }else if(mxWindowCounter==4){
+
+                let mxDateHtml = '<span id="'+currentBuno+'MxDates" ></span>';
+                $('#'+currentBuno+'MxWindow').append(mxDateHtml);
                 calendarEleClass = 'maintenance';
                 calendarEleLabel = 'Mx Start';
                 mxWindowCounter = mxWindowCounter-1;
-            }
-            else if(mxWindowCounter>0){
+            } else if(mxWindowCounter==3||mxWindowCounter==2){
+                calendarEleClass = 'maintenance';
+                calendarEleLabel = 'Mx Start';
+                mxWindowCounter = mxWindowCounter-1;
+
+            } else if(mxWindowCounter>0){
                  calendarEleClass = 'mxWindow';
                  calendarEleLabel = 'MX Window';
+                 if(mxWindowCounter==1){
+                     lastElement=true
+                 }
                  mxWindowCounter = mxWindowCounter-1;
             }else{
                 calendarEleClass = 'mc';
@@ -104,20 +116,37 @@ function calendarQuery(){
 
 
              currentDate = moment().add(j,'days').format('MM/DD/YYYY');
-             //let calendarEleHTML = '<div class="'+calendarEleClass+'">'+calendarEleLabel+'</div>';
-             let calendarEleHTML='<span class="'+calendarEleClass+'">'+calendarEleLabel+' </span>';
+             let calendarEleHTML='<span class="'+calendarEleClass+'" id="'+currentBuno+'Day'+j+'">'+calendarEleLabel+' </span>';
              if(j==35){
-                 calendarEleHTML = '<span class="'+calendarEleClass+'">'+calendarEleLabel+'</span><br>';
+                 calendarEleHTML = '<span class="'+calendarEleClass+'"  id="'+currentBuno+'Day'+j+'"  >'+calendarEleLabel+'</span><br>';
              }
-             //let calendarEleHTML='<span class="'+calendarEleClass+'">'+calendarEleLabel+' </span>';
-             $('#'+currentBuno).append(calendarEleHTML);
 
+
+
+            if( mxWindowCounter == 3 || mxWindowCounter==2||mxWindowCounter==1){
+              $('#'+currentBuno+'MxDates').append(calendarEleHTML);
+            }else if(lastElement==true){
+                $('#'+currentBuno+'MxWindow').append(calendarEleHTML);
+            } else if(mxWindowCounter>0){
+                $('#'+currentBuno+'MxWindow').append(calendarEleHTML);
+                $('#'+currentBuno+'MxWindow').sortable({
+                    helper: 'clone',
+                    forceHelperSize: true,
+                    axis: 'x',
+                    placeholder: 'sortable-placeholder',
+                    revert: true,
+
+                });
+            }else {
+                $('#' + currentBuno).append(calendarEleHTML);
+            }
         }
 
      }
+ }
 
-
-
+ function dragFunction(){
+    console.log('drag')
  }
 
 

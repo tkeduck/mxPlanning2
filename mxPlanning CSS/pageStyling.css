@@ -237,7 +237,7 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
     background-color:#454545;
     color: white;
     min-width: 100px;
-    height: 50px;
+    height: 36px;
     border: solid;
     border-color: black;
     text-align: center;
@@ -297,6 +297,14 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
 
     display: inline-block;
     text-align: center;
+}
+.sortable-placeholder{
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    display: inline-block;
+    width: 100px;
+    height: 100px;
 }
 
 /*</editor-fold>*/
