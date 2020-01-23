@@ -168,8 +168,14 @@ Bottom KPIs
     grid-area: filters;
     background-color: #454545;
     border: solid #909090;
+    display: grid;
+    grid-template-areas: 'saveTemplateButton other';
+    grid-template-columns: 1fr 5fr;
 }
 
+#saveTemplateButton{
+    grid-area: saveTemplateButton;
+}
 
 /*</editor-fold>*/
 
@@ -256,14 +262,15 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
     border-radius: 25px;
 }
 .mxWindow{
-    color: white;
+    color: black;
     height: 50px;
     width: 100px;
     border: solid;
     border-color:black;
     display: inline-block;
     text-align: center;
-   background-color: #f1a899;
+   background-color: forestgreen;
+    /*white-space: pre-line;*/
 
 
 }
@@ -306,6 +313,18 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
     width: 100px;
     height: 100px;
 }
+
+.testClass{
+    color: white;
+    height: 50px;
+    width: 100px;
+    border: solid;
+    border-color:black;
+    display: inline-block;
+    text-align: center;
+    background-color: yellow;
+}
+
 
 /*</editor-fold>*/
 
