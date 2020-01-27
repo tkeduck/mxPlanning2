@@ -7,7 +7,8 @@ function switchSquadron(){
     clearCurrentSchedule();
 
     getImageSrc();
-    populateCalendar()
+    populateCalendar();
+    populateOpsSpinners()
 }
 /*
 Getting image source to change displayed squadron emblem
@@ -44,10 +45,12 @@ function calendarQuery(){
         if (this.readyState == 4 && this.status == 200) {
             outputArray = JSON.parse(xhttp.responseText);
             addCalendarElements(outputArray);
+            getBUNOConfig(outputArray)
         }
     };
     xhttp.open("POST", "scripts/calendarquery.php", true);
     xhttp.send(JSON.stringify(selectedSquadron));
+
 
 }
 function addCalendarElements(inputArray){
@@ -63,7 +66,7 @@ function addCalendarElements(inputArray){
          $('#bunoLabel').data('BUNO'+i,currentBuno);
          $('#bunosAndMx').append('<span class="emptyClassRemoval" id="'+currentBuno+'"></span>');
          let bunoHtml =  '<span id="label'+currentBuno+'" class = "bunoCalendarElement">'+currentBuno+'</span>';
-         $('#bunoLabel').append(bunoHtml);
+         $('#bunoLabels').append(bunoHtml);
          $('#label'+currentBuno).data('numMXWindows', 0);
          mxWindowStartArray=[];
          //Converting the maintenance due date into a window start date in order to render to the calendar
@@ -130,11 +133,12 @@ function addCalendarElements(inputArray){
                 calendarEleLabel = 'MC';
             }
 
-
              currentDate = moment().add(j,'days').format('MM/DD/YYYY');
-             let calendarEleHTML='<span class="'+calendarEleClass+'" id="'+currentBuno+'Day'+j+'">'+calendarEleLabel+' </span>';
+             let calendarEleHTML='<span class="'+calendarEleClass+'" id="'+currentBuno+'Day'+j+'">'+calendarEleLabel+''+
+                 '<br><input id="hoursSpinner'+currentBuno+j+'" class="hoursSpinner"> </span>';
              if(j==35){
-                 calendarEleHTML = '<span class="'+calendarEleClass+'"  id="'+currentBuno+'Day'+j+'"  >'+calendarEleLabel+'</span><br>';
+                 calendarEleHTML = '<span class="'+calendarEleClass+'"  id="'+currentBuno+'Day'+j+'"  >'+
+                     calendarEleLabel+'<br><input class="hoursSpinner"></span><br>';
              }
 
 
@@ -161,7 +165,8 @@ function addCalendarElements(inputArray){
             }else {
                 $('#' + currentBuno).append(calendarEleHTML);
             }
-        }
+        $('.hoursSpinner').spinner()
+         }
 
      }
  }
@@ -317,7 +322,7 @@ function loadProposedSchedule(){
     detachedElement.insertAfter('#735914Day3')*/
 }
 function clearCurrentSchedule(){
-    $('#bunoLabel').html('<br>BUNO');
+    $('#bunoLabels').html('');
     $('.mc').remove();
     $('.mxWindow').remove();
     $('.maintenance').remove();
@@ -403,4 +408,99 @@ function calendarProposedDisplay(proposedArray, originalArray){
 /*
 Functions below are used to populate ops schedule spinners
  */
+
+function testFunction(){
+ $('.hoursSpinner').css("display", 'none')
+}
+function testFunction2(){
+    $('.filterCheckbox').checkboxradio({
+        icon:false
+    })
+}
+function getBUNOConfig(inputArray){
+    let numberBunos = inputArray.length;
+    let bunoArray = new Array();
+for(i=0;i<numberBunos;++i){
+    let bunoToAdd = inputArray[i][0]
+    bunoArray.push(bunoToAdd)
+}
+console.log(bunoArray);
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            console.log(xhttp.responseText)
+        }
+    };
+
+    xhttp.open("POST", "scripts/packageQuery.php", true);
+    xhttp.send(JSON.stringify(bunoArray));
+
+
+
+
+
+
+
+}
+
+
+
+
+
+function populateOpsSpinners(){
+    let squadronName = squadronSelect.value;
+    var xhttp = new XMLHttpRequest();
+    let outputArray = new Array;
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            let outputArray = JSON.parse(xhttp.responseText);
+            for(i = 1; i<37; ++i){
+                var spinner = $('#opsSpinner'+i).spinner().val(outputArray[i-1][2]);
+                if(i==1){
+                    var spinner = $('#opsSpinner1').spinner().val(outputArray[0][2]);
+
+                }
+            }
+        }
+
+    };
+
+    xhttp.open("POST", "scripts/populateOpsSpinners.php", true);
+    xhttp.send(JSON.stringify(squadronName));
+
+
+}
+
+
+function saveOpsDetails(){
+    let opsNeedArray = new Array();
+    let todayDate = moment().format('YYYY-MM-DD');
+    let squadronName = squadronSelect.value;
+    //todayDate = moment()
+    opsNeedArray[0]= squadronName;
+    let j =1;
+    for( i = 1; i<37; ++i){
+        var spinner = $('#opsSpinner'+i).spinner();
+        opsNeedArray[i]= spinner.val();
+        opsNeedArray[i+36] = todayDate;
+        //opsNeedArray[36]=12;//todayDate;
+        todayDate = moment().add(j, 'days').format('YYYY-MM-DD');
+        ++j;
+        //console.log(opsNeedArray[i]);
+    }
+    console.log(opsNeedArray);
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            console.log('OUT IT WENT HOPEFULLY');
+
+        }
+    };
+    //console.log(JSON.stringify(opsNeedArray));
+    xhttp.open("POST", "scripts/saveDataToDB.php", true);
+    xhttp.send(JSON.stringify(opsNeedArray));
+
+}
+
 

@@ -207,6 +207,17 @@ Maintenance Display- Includes the calendar, bunos and DET display
     background-color:#454545;
     border: solid #909090;
 }
+/*
+styling for filter group
+ */
+.filterCheckbox{
+    width: 25px;
+    height: 25px;
+
+}
+
+
+
 
 /*
 Styling for the calendar including Dates,BUNOs and Calendar Elements
@@ -217,8 +228,8 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
     background-color:#454545;
     display: grid;
     grid-template-areas: "bunoLabel bunosAndMx"
-                        "bunoLabel bunosAndMx";
-    grid-template-rows: 50px 4fr;
+                        "bunoLabels bunosAndMx";
+    grid-template-rows: 69px 4fr;
     grid-template-columns: 100px 1fr;
     border: solid;
     border-color: #909090;
@@ -243,18 +254,31 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
     display: inline-block;
     text-align: center;
 }
-
+.spinner{
+    width: 25px;
+}
 #bunoLabel{
     grid-area: bunoLabel;
     background-color:#454545;
     color: white;
     min-width: 100px;
-    height: 36px;
+    min-height: 69px;
+    max-height: 69px;
     border: solid;
     border-color: black;
     text-align: center;
-}
+    display: grid;
 
+}
+#bunoLabels{
+    grid-area: bunoLabels;
+    padding-top: 3px;
+}
+.hoursSpinner{
+    width: 10px;
+    height: 10px;
+
+}
 .bunoCalendarElement{
 
     color: white;

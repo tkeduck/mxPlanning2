@@ -3,8 +3,14 @@
         dropdown and be driven by user roles from a CAC, functions are called from controlling function
  */
 function initialLoading(){
+    createFilters();
     addDateLabels();
     populateSqdDropdown();
+}
+function createFilters(){
+    $('.filterCheckbox').checkboxradio({
+        icon:false
+    })
 
 }
 
@@ -29,15 +35,17 @@ function populateSqdDropdown(){
 }
 
 /*
-addDatelabels populates the date labels, 3 days behind and 35 days ahead
+addDatelabels populates the date labels, 3 days behind and 35 days ahead also adds ops spinners for displaying the ops
+requirement for any given day
  */
 function addDateLabels(){
     let todayDate = moment().add(-3,'days').format("MM/DD");
     let weekdayName = moment().add(-3,'days').format('dddd');
     for(i=-2; i<37; ++i){
-        $('#dateContainter').append('<span id= '+todayDate+' class="dateLabels">'+weekdayName+'<br>'+todayDate+'</span>');
+        $('#dateContainter').append('<span id= '+todayDate+' class="dateLabels">'+weekdayName+'<br>'+todayDate+'<br><input id="opsSpinner'+i+'" class="spinner"></span>');
         if(i==36){
             $('#dateContainter').append('<br>')
+        $('.spinner').spinner()
         }
         todayDate = moment().add(i,'days').format('MM/DD');
         weekdayName = moment().add(i, 'days').format('dddd');
@@ -50,9 +58,3 @@ function addDateLabels(){
 createOpsSpinners creates an op spinner for each date and adds a unique name and id to be utilized in a datamanagement
 script
  */
-function createOpsSpinners(){
-
-
-
-
-}
