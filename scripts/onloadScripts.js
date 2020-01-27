@@ -29,7 +29,7 @@ function populateSqdDropdown(){
 }
 
 /*
-addDates populates the date labels, 3 days behind and 35 days ahead
+addDatelabels populates the date labels, 3 days behind and 35 days ahead
  */
 function addDateLabels(){
     let todayDate = moment().add(-3,'days').format("MM/DD");
@@ -42,6 +42,17 @@ function addDateLabels(){
         todayDate = moment().add(i,'days').format('MM/DD');
         weekdayName = moment().add(i, 'days').format('dddd');
     }
+
+
+}
+
+/*
+createOpsSpinners creates an op spinner for each date and adds a unique name and id to be utilized in a datamanagement
+script
+ */
+function createOpsSpinners(){
+
+
 
 
 }

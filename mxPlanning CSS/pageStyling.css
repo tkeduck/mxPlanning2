@@ -169,12 +169,18 @@ Bottom KPIs
     background-color: #454545;
     border: solid #909090;
     display: grid;
-    grid-template-areas: 'saveTemplateButton other';
-    grid-template-columns: 1fr 5fr;
+    grid-template-areas: 'saveTemplateButton loadProposedScheduleButton other';
+    grid-template-columns: 1fr 1fr 4fr;
 }
 
 #saveTemplateButton{
     grid-area: saveTemplateButton;
+}
+#loadProposedScheduleButton{
+    grid-area: loadProposedScheduleButton;
+}
+#other{
+    grid-area: other;
 }
 
 /*</editor-fold>*/

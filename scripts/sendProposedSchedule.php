@@ -1,4 +1,5 @@
 <?php
+
 $str_json = file_get_contents('php://input');
 $cleandata = json_decode($str_json);
 $lengthArray = count($cleandata);
@@ -23,11 +24,12 @@ $MXDate = $year.'/'.$month.'/'.$day;
 require_once 'login.php';
 $conn = new mysqli($hn, $un, $pw, $db);
 
-if($numMXwindows==1) {
+if($currentCounter==1) {
     $SQL = "DELETE FROM proposedMXDates WHERE BUNO ='$BUNO'";
     mysqli_query($conn, $SQL);
     $SQL = "INSERT INTO proposedMXDates (BUNO, SQDName) VALUES ('$BUNO','$SQDName')";
     mysqli_query($conn, $SQL);
+
 }
 
 for ($x = 4; $x<$lengthArray-1;$x++){
@@ -42,7 +44,7 @@ $output= "Error: " . $SQL . "" . mysqli_error($conn);
 }else{
     $output='Updated Schedule Created for BUNO: '.$BUNO;
 }
-
+mysqli_close($conn);
 $send_it = json_encode($output);
 
 echo $send_it;

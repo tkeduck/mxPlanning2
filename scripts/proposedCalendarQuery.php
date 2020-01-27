@@ -6,7 +6,7 @@ $conn = new mysqli($hn, $un, $pw, $db);
 if ($conn->connect_error) die("Failure");
 $squadron_name = $cleandata;
 
-$result = $conn->query("SELECT * FROM BUNOMXDates WHERE squadronName = '$squadron_name' ORDER BY BUNO ASC");
+$result = $conn->query("SELECT * FROM proposedMXDates WHERE SQDName = '$squadron_name' ORDER BY BUNO ASC");
 
 /*$result = $conn->query("SELECT * FROM squadron_basic_details WHERE squadronName= $squadron_name");*/
 if (!$result) die("NO LOVE");

@@ -4,10 +4,11 @@ Controlling function for switching squadrons, calls functions to:
     Populate the calendar
  */
 function switchSquadron(){
+    clearCurrentSchedule();
+
     getImageSrc();
     populateCalendar()
 }
-
 /*
 Getting image source to change displayed squadron emblem
  */
@@ -28,7 +29,6 @@ function getImageSrc(){
     //sending selected squadron as part of the SQL query
     xhttp.send(JSON.stringify(selectedSquadron));
 }
-
 /*
     Need to get BUNOs associated with Squadron selected in order to populate the calendar, need to pull in BUNOs and
         maintenance dates associated with the selected SQUADRON
@@ -48,6 +48,7 @@ function calendarQuery(){
     };
     xhttp.open("POST", "scripts/calendarquery.php", true);
     xhttp.send(JSON.stringify(selectedSquadron));
+
 }
 function addCalendarElements(inputArray){
      // Using current date to indicate the start of the calendar, will cycle through maintenance events to test if
@@ -60,7 +61,7 @@ function addCalendarElements(inputArray){
          let currentDate = moment().add(-3,'days').format("MM/DD/YYYY");
          let currentBuno = inputArray[i][0];
          $('#bunoLabel').data('BUNO'+i,currentBuno);
-         $('#bunosAndMx').append('<span id="'+currentBuno+'"></span>');
+         $('#bunosAndMx').append('<span class="emptyClassRemoval" id="'+currentBuno+'"></span>');
          let bunoHtml =  '<span id="label'+currentBuno+'" class = "bunoCalendarElement">'+currentBuno+'</span>';
          $('#bunoLabel').append(bunoHtml);
          $('#label'+currentBuno).data('numMXWindows', 0);
@@ -164,7 +165,6 @@ function addCalendarElements(inputArray){
 
      }
  }
-
  function logStartPosition(idName){
      let nameParent =$('#'+idName).parent();
      let parentId = nameParent[0].id;
@@ -204,14 +204,16 @@ Functions below are used to save the modified schedule to the server to allow fo
 function saveSubmit(){
 
     let numberBunos = $('#bunoLabel').data('numBunos');
+
     for( i = 0; i< numberBunos; ++i){
-        let currentBuno = $('#bunoLabel').data('BUNO'+i)
+
+        let currentBuno = $('#bunoLabel').data('BUNO'+i);
         let numMXWindows = $('#label'+currentBuno).data('numMXWindows');
         let numMXEvents = 0;
         let mxArray = new Array();
         let squadronName = $('#squadronSelect').val();
         let mxItemName = '';
-        for(j=1; j<=numMXWindows; ++j){
+        for(j=0; j<=numMXWindows; ++j){
             numMXEvents= $('#'+currentBuno+'MxWindow'+j).data('numberMXItems');
             mxArray=[];
             mxArray.push(currentBuno);
@@ -253,19 +255,29 @@ function saveSubmit(){
 
 
                 mxArray.push(mxItemName)
-                //mxArray.push(currentMxItem)
             }
             let endPos = $('#label'+currentBuno).data('endPos'+j);
-            //console.log($('#785643MxWindow2').index())
-            let mxWindowDateOffset = $('#'+currentBuno+'MxWindow'+j).index();
-            mxWindowDateOffset = mxWindowDateOffset-3+endPos;
-            if(j>1){
-                mxWindowDateOffset=mxWindowDateOffset+3+endPos
+            let mxWindowDateOffset = 0;
+            //The index call returns where the MxWindow is, need to also find the position of the MXdates inside that
+            //div so we need to convert
+            mxWindowDateOffset = $('#'+currentBuno+'MxWindow'+j).index();
+            if(endPos==0){
+                mxWindowDateOffset=mxWindowDateOffset-3
+            }else if(endPos==1){
+                mxWindowDateOffset=mxWindowDateOffset-2
+            }else if(endPos==2){
+                mxWindowDateOffset=mxWindowDateOffset-1
+            }else if(endPos==4){
+                mxWindowDateOffset=mxWindowDateOffset+1
             }
-            //let mxWindowDate = moment().add(mxWindowDateOffset,'days').format('MM/DD/YYYY');
+            //Need to add 3 to the offset because the days in the mxWindow div are not included in the index,
+            // so if there are two MXwindows the 2nd date would be recorded as 3 days earlier, the 3rd date would be 6
+            // dates earlier and so on
+            if(j>1){
+                mxWindowDateOffset=mxWindowDateOffset+j*3;
+            }
             let mxDate = moment().add(mxWindowDateOffset,'days').format('MM/DD/YYYY');
             mxArray.push(mxDate);
-            //console.log(mxArray);
             sendProposedSchedule(mxArray,numMXWindows,j);
 
 
@@ -281,13 +293,13 @@ function saveSubmit(){
 
 
 }
-
 function sendProposedSchedule(mxArray, numMXWindows, currentCounter){
 
     //pull value from squadron dropdown
     //let selectedSquadron = $("#squadronSelect").val();
     mxArray.unshift(numMXWindows,currentCounter);
     var xhttp = new XMLHttpRequest();
+    console.log(mxArray);
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             console.log(JSON.parse(xhttp.responseText))
@@ -297,8 +309,98 @@ function sendProposedSchedule(mxArray, numMXWindows, currentCounter){
     xhttp.open("POST", "scripts/sendProposedSchedule.php", true);
     xhttp.send(JSON.stringify(mxArray));
 }
+function loadProposedSchedule(){
+    //clearCurrentSchedule();
+    getProposedCalendarDates()
+    //console.log($('#785643MxWindow2').data())
+    /*let detachedElement =$('#735914MxDates1').detach();
+    detachedElement.insertAfter('#735914Day3')*/
+}
+function clearCurrentSchedule(){
+    $('#bunoLabel').html('<br>BUNO');
+    $('.mc').remove();
+    $('.mxWindow').remove();
+    $('.maintenance').remove();
+    $('.emptyClassRemoval').remove()
+}
+function getProposedCalendarDates(){
+    let xhttp = new XMLHttpRequest();
+    let selectedSquadron = $('#squadronSelect').val();
+    let outputArray = new Array();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            outputArray = JSON.parse(xhttp.responseText);
+            proposedCalendarQueryOrig(outputArray)
+
+        }
+    };
+    xhttp.open("POST", "scripts/proposedCalendarQuery.php", true);
+    xhttp.send(JSON.stringify(selectedSquadron));
+
+
+}
+function proposedCalendarQueryOrig(proposedArray){
+    let xhttp = new XMLHttpRequest();
+    let selectedSquadron = $('#squadronSelect').val();
+    let outputArray = new Array();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            outputArray = JSON.parse(xhttp.responseText);
+            calendarProposedDisplay(proposedArray,outputArray)
+            //addProposedCalendarElements(proposedArray, outputArray)
+        }
+    };
+    xhttp.open("POST", "scripts/calendarquery.php", true);
+    xhttp.send(JSON.stringify(selectedSquadron));
+
+}
+function calendarProposedDisplay(proposedArray, originalArray){
+    let numberOfBunos = proposedArray.length;
+    for(i=0; i<numberOfBunos; ++i){
+        let currentBuno = proposedArray[i][0];
+        let numberMxWindows = $('#label'+currentBuno).data('numMXWindows');
+        for(j = 1; j<=numberMxWindows;++j) {
+            let numberMXItems = $('#' + currentBuno + 'MxWindow' + j).data('numberMXItems');
+            let mxNumber = $('#' + currentBuno + 'MxWindow' + j).data('mxItem0');
+            if(proposedArray[i][mxNumber+2]!= originalArray[i][mxNumber+2]){
+                let proposedDate = moment(proposedArray[i][mxNumber+2]);
+                let originalDate = moment(originalArray[i][mxNumber+2]);
+                let dateDiff = originalDate.diff(proposedDate,'days');
+                console.log(dateDiff);
+                let appendAfterID = $('#' + currentBuno + 'MxWindow' + j+' span').eq(dateDiff).attr('id');
+                console.log(appendAfterID);
+                let detachedElement = $('#'+currentBuno+'MxDates'+j).detach();
+                if(dateDiff==3){
+                    dateDiff = 0;
+                    appendAfterID = $('#' + currentBuno + 'MxWindow' + j+' span').eq(dateDiff).attr('id');
+                    detachedElement.insertBefore($('#'+appendAfterID))
+                }else {
+                    detachedElement.insertAfter($('#' + appendAfterID));
+                }
+
+            }
+            for(x=0;x<8;++x){
+                if($('#'+ currentBuno + 'MxWindow' + j).find('span').eq(x).hasClass('maintenance')== true) {
+                    //left empty for now, initially used it but dont want to change the if statement until later
+                }else if($('#'+ currentBuno + 'MxWindow' + j).find('span').eq(x).hasClass('mxWindow') &&  (x==3 || x==4 || x==5||x==6)){
+                    $('#' + currentBuno + 'MxWindow' + j).find('span').eq(x).css('background-color', 'red');
+                    $('#' + currentBuno + 'MxWindow' + j).find('span').eq(x).html('Orig MX Date');
+                }else if($('#'+ currentBuno + 'MxWindow' + j).find('span').eq(x).hasClass('mxWindow')){
+                    $('#'+ currentBuno + 'MxWindow' + j).find('span').eq(x).css('background-color', 'forestgreen');
+                    $('#' + currentBuno + 'MxWindow' + j).find('span').eq(x).html('MX Window');
+                }
+            }
+
+
+        }
 
 
 
+    }
 
+
+}
+/*
+Functions below are used to populate ops schedule spinners
+ */
 
