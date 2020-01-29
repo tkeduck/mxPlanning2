@@ -5,10 +5,10 @@ Controlling function for switching squadrons, calls functions to:
  */
 function switchSquadron(){
     clearCurrentSchedule();
-
     getImageSrc();
     populateCalendar();
     populateOpsSpinners()
+    $('#expectedFlightDateButton').data('clicked', false)
 }
 /*
 Getting image source to change displayed squadron emblem
@@ -135,10 +135,10 @@ function addCalendarElements(inputArray){
 
              currentDate = moment().add(j,'days').format('MM/DD/YYYY');
              let calendarEleHTML='<span class="'+calendarEleClass+'" id="'+currentBuno+'Day'+j+'">'+calendarEleLabel+''+
-                 '<br><input id="hoursSpinner'+currentBuno+j+'" class="hoursSpinner"> </span>';
+                 '</span>';
              if(j==35){
                  calendarEleHTML = '<span class="'+calendarEleClass+'"  id="'+currentBuno+'Day'+j+'"  >'+
-                     calendarEleLabel+'<br><input class="hoursSpinner"></span><br>';
+                     calendarEleLabel+'<br></span><br>';
              }
 
 
@@ -175,7 +175,6 @@ function addCalendarElements(inputArray){
      let parentId = nameParent[0].id;
      let mxWindowNumber = parentId.substr(-1);
      let buno = idName.substr(0,6);
-     //console.log($('#'+buno+'MxDates'+mxWindowNumber).index())
      let startPos = $('#'+buno+'MxDates'+mxWindowNumber).index();
      $('#label'+buno).data('startPos', startPos)
 
@@ -185,7 +184,6 @@ function addCalendarElements(inputArray){
      let parentId = nameParent[0].id;
      let mxWindowNumber = parentId.substr(-1);
      let buno = idName.substr(0,6);
-     //console.log($('#'+buno+'MxDates'+mxWindowNumber).index())
      let endPos = $('#'+buno+'MxDates'+mxWindowNumber).index();
      $('#label'+buno).data('endPos'+mxWindowNumber, endPos);
      for(i=0;i<8;++i){
@@ -301,10 +299,8 @@ function saveSubmit(){
 function sendProposedSchedule(mxArray, numMXWindows, currentCounter){
 
     //pull value from squadron dropdown
-    //let selectedSquadron = $("#squadronSelect").val();
     mxArray.unshift(numMXWindows,currentCounter);
     var xhttp = new XMLHttpRequest();
-    console.log(mxArray);
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             console.log(JSON.parse(xhttp.responseText))
@@ -315,11 +311,8 @@ function sendProposedSchedule(mxArray, numMXWindows, currentCounter){
     xhttp.send(JSON.stringify(mxArray));
 }
 function loadProposedSchedule(){
-    //clearCurrentSchedule();
     getProposedCalendarDates()
-    //console.log($('#785643MxWindow2').data())
-    /*let detachedElement =$('#735914MxDates1').detach();
-    detachedElement.insertAfter('#735914Day3')*/
+
 }
 function clearCurrentSchedule(){
     $('#bunoLabels').html('');
@@ -371,9 +364,7 @@ function calendarProposedDisplay(proposedArray, originalArray){
                 let proposedDate = moment(proposedArray[i][mxNumber+2]);
                 let originalDate = moment(originalArray[i][mxNumber+2]);
                 let dateDiff = originalDate.diff(proposedDate,'days');
-                console.log(dateDiff);
                 let appendAfterID = $('#' + currentBuno + 'MxWindow' + j+' span').eq(dateDiff).attr('id');
-                console.log(appendAfterID);
                 let detachedElement = $('#'+currentBuno+'MxDates'+j).detach();
                 if(dateDiff==3){
                     dateDiff = 0;
@@ -412,23 +403,24 @@ Functions below are used to populate ops schedule spinners
 function testFunction(){
  $('.hoursSpinner').css("display", 'none')
 }
-function testFunction2(){
-    $('.filterCheckbox').checkboxradio({
-        icon:false
-    })
+function testFunction2(id){
+console.log(id)
 }
 function getBUNOConfig(inputArray){
     let numberBunos = inputArray.length;
     let bunoArray = new Array();
 for(i=0;i<numberBunos;++i){
-    let bunoToAdd = inputArray[i][0]
+    let bunoToAdd = inputArray[i][0];
     bunoArray.push(bunoToAdd)
 }
-console.log(bunoArray);
+    $('#SQDImage').data('bunoArray',bunoArray);
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            console.log(xhttp.responseText)
+            let outputArray = JSON.parse(xhttp.responseText);
+            //console.log(outputArray);
+            distributeBunoConfig(outputArray);
+
         }
     };
 
@@ -436,11 +428,53 @@ console.log(bunoArray);
     xhttp.send(JSON.stringify(bunoArray));
 
 
+}
+function distributeBunoConfig(inputArray){
+
+    let numberBunos = inputArray.length;
+
+    for(i=0;i<numberBunos;++i){
+        let currentArray = inputArray[i][0];
+        let currentBuno = currentArray[0];
+        let numberOfPkgs=currentArray.length;
+        for(j=1;j<=numberOfPkgs;++j){
+            let pkgStatus = currentArray[j];
+            $('#label'+currentBuno).data('package'+j,pkgStatus)
+        }
+    }
+
+}
 
 
+function filterBunos() {
+    let bunos = $('#SQDImage').data('bunoArray');
+    let numberBunos = bunos.length;
+    let currentSelectedFiltersArray = new Array();
+    let filteredStatus = false
+    for (x = 1; x < 6; ++x) {
+        let checkedState = $('#checkbox' + x).prop('checked');
+        currentSelectedFiltersArray.push(checkedState);
+    }
+
+    for (j = 0; j < 5; ++j) {
+        let filterSelected = currentSelectedFiltersArray[j];
+        for (i = 0; i < numberBunos; ++i) {
+            let currentBuno = bunos[i];
+            let number = j + 1;
+            let pkgStatus = $('#label' + currentBuno).data('package' + number);
+            if (pkgStatus == 0 && filterSelected == true) {
+                 filteredStatus = true
+                $('#label' + currentBuno).hide();
+                $('#' + currentBuno).hide()
+            }
+            if(filteredStatus==false){
+                $('#label' + currentBuno).show();
+                $('#' + currentBuno).show()
+            }
+        }
 
 
-
+    }
 }
 
 
@@ -484,12 +518,9 @@ function saveOpsDetails(){
         var spinner = $('#opsSpinner'+i).spinner();
         opsNeedArray[i]= spinner.val();
         opsNeedArray[i+36] = todayDate;
-        //opsNeedArray[36]=12;//todayDate;
         todayDate = moment().add(j, 'days').format('YYYY-MM-DD');
         ++j;
-        //console.log(opsNeedArray[i]);
     }
-    console.log(opsNeedArray);
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
@@ -497,10 +528,37 @@ function saveOpsDetails(){
 
         }
     };
-    //console.log(JSON.stringify(opsNeedArray));
+
     xhttp.open("POST", "scripts/saveDataToDB.php", true);
     xhttp.send(JSON.stringify(opsNeedArray));
 
 }
 
 
+
+
+
+
+function expectedFlightDateTool(){
+    if($('#expectedFlightDateButton').data('clicked')==true){
+        $('#expectedFlightDateButton').data('clicked', false);
+        $('#expectedFlightDateButton').css('background-color', 'lightgrey');
+        $('.mc').unbind('click')
+
+    }else if($('#expectedFlightDateButton').data('clicked')==false){
+        $('#expectedFlightDateButton').data('clicked',true);
+        $('#expectedFlightDateButton').css('background-color', 'lightblue');
+        $('.mc').on('click', function(){
+            var id = $(this).attr('id');
+            $('#'+id).append(' &emsp;<i class="material-icons">flight_takeoff</i>')
+            $('#'+id).data('expectedFlightDate', true);
+            console.log($('#'+id).data());
+            console.log(id)
+        });
+
+
+
+    }
+
+
+}

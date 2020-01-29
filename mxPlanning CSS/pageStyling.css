@@ -187,7 +187,9 @@ Bottom KPIs
 
 /*</editor-fold>*/
 
+#expectedFlightDateButton{
 
+}
 /*
 Maintenance Display- Includes the calendar, bunos and DET display
  */
@@ -300,6 +302,7 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
     display: inline-block;
     text-align: center;
    background-color: forestgreen;
+    line-height: 39px;
     /*white-space: pre-line;*/
 
 
@@ -307,14 +310,20 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
 .mc{
     color: white;
     height: 50px;
+    max-height: 50px;
     width: 100px;
     background-color: darkgreen;
     border: solid;
     border-color:black;
-
     display: inline-block;
     text-align: center;
+    line-height: 39px;
+
 }
+.material-icons{
+    font-size: 30px;
+}
+
 #bunosAndMx{
     grid-area: bunosAndMx;
     background-color: #454545;
@@ -324,6 +333,7 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
     white-space: nowrap;
 
 }
+
 .maintenance{
     color: white;
     height: 50px;
@@ -331,7 +341,7 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
     background-color: tomato;
     border: solid;
     border-color:black;
-
+    line-height: 39px;
     display: inline-block;
     text-align: center;
 }

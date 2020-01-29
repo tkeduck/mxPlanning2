@@ -6,6 +6,7 @@ function initialLoading(){
     createFilters();
     addDateLabels();
     populateSqdDropdown();
+
 }
 function createFilters(){
     $('.filterCheckbox').checkboxradio({

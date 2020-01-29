@@ -9,6 +9,8 @@
     <link rel= "stylesheet" href="mxPlanning CSS/pageStyling.css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
 </head>
 <body onload="initialLoading()">
     <section id="pageContainer">
@@ -60,24 +62,26 @@
                 <button onclick="saveSubmit()" id="saveTemplateButton">Save and Submit MX Schedule</button>
                 <button id="loadProposedScheduleButton" onclick="loadProposedSchedule()">Load Currently Proposed Schedule</button>
                 <button id="testButton" onclick="testFunction()">Click ME for TEST</button>
-                <button id="testButton2" onclick="testFunction2()">Click ME for other TEST</button>
+                <button id="testButton2" onclick="testFunction2(this.id)">Click ME for other TEST</button>
                 <span id="other">
-                    <input type="checkbox" class="filterCheckbox" name="checkbox1" id="checkbox1">
+                    <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox1" id="checkbox1">
                     <label for="checkbox1">Package 1</label>
-                    <input type="checkbox" class="filterCheckbox" name="checkbox2" id="checkbox2">
+                    <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox2" id="checkbox2">
                     <label for="checkbox2">Package 2</label>
-                    <input type="checkbox" class="filterCheckbox" name="checkbox3" id="checkbox3">
+                    <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox3" id="checkbox3">
                     <label for="checkbox3">Package 3</label>
-                    <input type="checkbox" class="filterCheckbox" name="checkbox4" id="checkbox4">
+                    <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox4" id="checkbox4">
                     <label for="checkbox4">Package 4</label>
-                    <input type="checkbox" class="filterCheckbox" name="checkbox5" id="checkbox5">
+                    <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox5" id="checkbox5">
                     <label for="checkbox5">Package 5</label>
                 </span>
             </section>
         </section>
         <section id="mxDisplay">
                 <section id="detDisplay">
-                    DetDisplay
+                    <button id="expectedFlightDateButton" onclick="expectedFlightDateTool()">
+                        <i class="material-icons">flight_takeoff</i>
+                    </button>
                 </section>
                 <section id="calendarDisplay">
                         <div id="bunoLabel">
