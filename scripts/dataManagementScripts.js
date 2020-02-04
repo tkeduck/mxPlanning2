@@ -63,11 +63,15 @@ function addCalendarElements(inputArray){
          $("#bunoLabel").data('numBunos', numberOfBunos);
          let currentDate = moment().add(-3,'days').format("MM/DD/YYYY");
          let currentBuno = inputArray[i][0];
+         let currentModex= inputArray[i][12];
          $('#bunoLabel').data('BUNO'+i,currentBuno);
          $('#bunosAndMx').append('<span class="emptyClassRemoval" id="'+currentBuno+'"></span>');
-         let bunoHtml =  '<span id="label'+currentBuno+'" class = "bunoCalendarElement">'+currentBuno+'</span>';
+         let bunoHtml =  '<span id="label'+currentBuno+'" class = "bunoCalendarElement">'+currentBuno+'<br>'+currentModex+'</span>';
          $('#bunoLabels').append(bunoHtml);
          $('#label'+currentBuno).data('numMXWindows', 0);
+         $('#label'+currentBuno).data('clicked', false);
+         bunoQueryTwo(currentBuno);
+
          mxWindowStartArray=[];
          //Converting the maintenance due date into a window start date in order to render to the calendar
          for(k=2; k<12; ++k){
@@ -95,7 +99,7 @@ function addCalendarElements(inputArray){
              // mx window, need to allow them to move the maintenance event around in that window to allow for planning
             if(currentDateMXItems.length >0){
                  calendarEleClass = 'mxWindow';
-                 calendarEleLabel = 'MX Window';
+                 calendarEleLabel = '<i class="material-icons">build</i>';
                  mxWindowCounter = 6;
                 $('#'+currentBuno).append('<span id="'+currentBuno+'MxWindow'+mxEventCounter+'"></span>');
                 $('#label'+currentBuno).data('endPos'+mxEventCounter, 3);
@@ -114,23 +118,23 @@ function addCalendarElements(inputArray){
                 let mxDateHtml = '<span  id="'+currentBuno+'MxDates'+mxEventCounter+'" ></span>';
                 $('#'+currentBuno+'MxWindow'+mxEventCounter).append(mxDateHtml);
                 calendarEleClass = 'maintenance';
-                calendarEleLabel = 'Mx Start';
+                calendarEleLabel = '<i class="material-icons">build airplanemode_inactive</i>';
                 mxWindowCounter = mxWindowCounter-1;
             } else if(mxWindowCounter==3||mxWindowCounter==2){
                 calendarEleClass = 'maintenance';
-                calendarEleLabel = 'MX';
+                calendarEleLabel = '<i class="material-icons">build airplanemode_inactive</i>';
                 mxWindowCounter = mxWindowCounter-1;
 
             } else if(mxWindowCounter>0){
                  calendarEleClass = 'mxWindow';
-                 calendarEleLabel = 'MX Window';
+                 calendarEleLabel = '<i class="material-icons">aspect_ratio airplanemode_active</i>';
                  if(mxWindowCounter==1){
                      lastElement=true
                  }
                  mxWindowCounter = mxWindowCounter-1;
             }else{
                 calendarEleClass = 'mc';
-                calendarEleLabel = 'MC';
+                calendarEleLabel = '<i class="material-icons">airplanemode_active</i> ';
             }
 
              currentDate = moment().add(j,'days').format('MM/DD/YYYY');
@@ -165,11 +169,62 @@ function addCalendarElements(inputArray){
             }else {
                 $('#' + currentBuno).append(calendarEleHTML);
             }
-        $('.hoursSpinner').spinner()
-         }
+            $('#'+currentBuno+'Day'+j).data('expectedFlightDate', false)
+            $('#label'+currentBuno).data('budgetedHours',0)
+             if(j==-1){
+                 $('#'+currentBuno+'Day'+j).addClass('lastPastDatesCalendarEle');
+                 console.log('test')
+             }
 
+        }
      }
- }
+    $('.bunoCalendarElement').on('click', function(){
+        let id = $(this).attr('id');
+        loadBunoDetails(id)
+    });
+}
+function bunoQueryTwo(buno){
+    //let selectedBuno = id.slice(5,11);
+
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            console.log('OUT IT WENT HOPEFULLY');
+            let outputArray = JSON.parse(xhttp.responseText);
+            storeBunoDynInfo(outputArray, buno);
+        }
+    };
+
+    xhttp.open("POST", "scripts/dynamicComponentsQuery.php", true);
+    xhttp.send(JSON.stringify(buno));
+
+}
+function storeBunoDynInfo(inputArray, buno){
+    let bunoEle = $('#label'+buno);
+    bunoEle.data('dynamicComponents', inputArray);
+    /*
+        bunoEle.data('phaseA', inputArray[0][1])
+        bunoEle.data('phaseB', inputArray[0][2])
+        bunoEle.data('phaseC', inputArray[0][3])
+        bunoEle.data('phaseD', inputArray[0][4])
+        bunoEle.data('rudderActuator', inputArray[0][5])
+        bunoEle.data('stabActuator', inputArray[0][6])
+        bunoEle.data('f404CombustionSection', inputArray[0][7])
+        bunoEle.data('totalFlightHours', inputArray[0][8])
+        */
+
+
+
+}
+
+
+
+
+
+
+
+
  function logStartPosition(idName){
      let nameParent =$('#'+idName).parent();
      let parentId = nameParent[0].id;
@@ -190,11 +245,11 @@ function addCalendarElements(inputArray){
          if($('#'+parentId).find('span').eq(i).hasClass('maintenance')== true) {
              //left empty for now, initially used it but dont want to change the if statement until later
          }else if($('#'+parentId).find('span').eq(i).hasClass('mxWindow') &&  (i==3 || i==4 || i==5||i==6)){
-             $('#' + parentId).find('span').eq(i).css('background-color', 'red');
-             $('#' + parentId).find('span').eq(i).html('Orig MX Date');
+             $('#' + parentId).find('span').eq(i).css('background-color', '#e65c00');
+             $('#' + parentId).find('span').eq(i).html('<i class="material-icons">compare_arrows</i>');
          }else if($('#'+parentId).find('span').eq(i).hasClass('mxWindow')){
              $('#' + parentId).find('span').eq(i).css('background-color', 'forestgreen');
-             $('#' + parentId).find('span').eq(i).html('MX Window');
+             $('#' + parentId).find('span').eq(i).html('<i class="material-icons">build</i>');
          }
      }
 
@@ -206,6 +261,7 @@ Functions below are used to save the modified schedule to the server to allow fo
  */
 function saveSubmit(){
 
+    saveOpsDetails();
     let numberBunos = $('#bunoLabel').data('numBunos');
 
     for( i = 0; i< numberBunos; ++i){
@@ -310,6 +366,8 @@ function sendProposedSchedule(mxArray, numMXWindows, currentCounter){
     xhttp.open("POST", "scripts/sendProposedSchedule.php", true);
     xhttp.send(JSON.stringify(mxArray));
 }
+
+
 function loadProposedSchedule(){
     getProposedCalendarDates()
 
@@ -379,7 +437,7 @@ function calendarProposedDisplay(proposedArray, originalArray){
                 if($('#'+ currentBuno + 'MxWindow' + j).find('span').eq(x).hasClass('maintenance')== true) {
                     //left empty for now, initially used it but dont want to change the if statement until later
                 }else if($('#'+ currentBuno + 'MxWindow' + j).find('span').eq(x).hasClass('mxWindow') &&  (x==3 || x==4 || x==5||x==6)){
-                    $('#' + currentBuno + 'MxWindow' + j).find('span').eq(x).css('background-color', 'red');
+                    $('#' + currentBuno + 'MxWindow' + j).find('span').eq(x).css('background-color', '#e65c00');
                     $('#' + currentBuno + 'MxWindow' + j).find('span').eq(x).html('Orig MX Date');
                 }else if($('#'+ currentBuno + 'MxWindow' + j).find('span').eq(x).hasClass('mxWindow')){
                     $('#'+ currentBuno + 'MxWindow' + j).find('span').eq(x).css('background-color', 'forestgreen');
@@ -400,12 +458,6 @@ function calendarProposedDisplay(proposedArray, originalArray){
 Functions below are used to populate ops schedule spinners
  */
 
-function testFunction(){
- $('.hoursSpinner').css("display", 'none')
-}
-function testFunction2(id){
-console.log(id)
-}
 function getBUNOConfig(inputArray){
     let numberBunos = inputArray.length;
     let bunoArray = new Array();
@@ -426,9 +478,10 @@ for(i=0;i<numberBunos;++i){
 
     xhttp.open("POST", "scripts/packageQuery.php", true);
     xhttp.send(JSON.stringify(bunoArray));
-
-
 }
+
+
+
 function distributeBunoConfig(inputArray){
 
     let numberBunos = inputArray.length;
@@ -524,7 +577,7 @@ function saveOpsDetails(){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-            console.log('OUT IT WENT HOPEFULLY');
+            console.log('saveOpsDetails');
 
         }
     };
@@ -543,17 +596,52 @@ function expectedFlightDateTool(){
     if($('#expectedFlightDateButton').data('clicked')==true){
         $('#expectedFlightDateButton').data('clicked', false);
         $('#expectedFlightDateButton').css('background-color', 'lightgrey');
-        $('.mc').unbind('click')
+        $('.mc').unbind('click');
+        $('.mxWindow').unbind('click');
+        $('#efdHoursSpinner').css('display', 'none')
 
     }else if($('#expectedFlightDateButton').data('clicked')==false){
         $('#expectedFlightDateButton').data('clicked',true);
-        $('#expectedFlightDateButton').css('background-color', 'lightblue');
+        $('#expectedFlightDateButton').css('background-color', 'tan');
+        var spinner = $('#efdHoursSpinner').spinner();
+        spinner.spinner()
+        $('#efdHoursSpinner').css('display','inline-block');
+        $('.mxWindow').on('click', function(){
+            var id = $(this).attr('id');
+            if($('#'+id).data('expectedFlightDate')==false) {
+                let flightHours = $('#efdHoursSpinner').val();
+                $('#'+id).append(' &emsp;<i class="material-icons">flight_takeoff</i>'+flightHours);
+                $('#' + id).data('expectedFlightDate', true);
+                assignHours(flightHours, id)
+                manageFlightNumber(1,id)
+            } else if($('#'+id).data('expectedFlightDate')==true){
+                $('#'+id).html('<i class="material-icons">build</i>');
+                $('#' + id).data('expectedFlightDate', false);
+                manageFlightNumber(-1,id)
+                let flightHours = $('#efdHoursSpinner').val();
+                flightHours = flightHours*-1;
+                assignHours(flightHours, id)
+            }
+        });
+
         $('.mc').on('click', function(){
             var id = $(this).attr('id');
-            $('#'+id).append(' &emsp;<i class="material-icons">flight_takeoff</i>')
-            $('#'+id).data('expectedFlightDate', true);
-            console.log($('#'+id).data());
-            console.log(id)
+            if($('#'+id).data('expectedFlightDate')==false) {
+                let flightHours = $('#efdHoursSpinner').val();
+                $('#'+id).append(' <i class="material-icons">flight_takeoff</i>'+flightHours);
+                $('#' + id).data('expectedFlightDate', true);
+                assignHours(flightHours, id)
+                manageFlightNumber(1,id)
+
+
+            } else if($('#'+id).data('expectedFlightDate')==true){
+                $('#'+id).html('<i class="material-icons">airplanemode_active</i>');
+                $('#' + id).data('expectedFlightDate', false);
+                let flightHours = $('#efdHoursSpinner').val();
+                manageFlightNumber(-1,id)
+                flightHours = flightHours*-1
+                assignHours(flightHours, id)
+            }
         });
 
 
@@ -561,4 +649,194 @@ function expectedFlightDateTool(){
     }
 
 
+}
+
+function manageFlightNumber(numberChange, id){
+    let dateNumber = id.slice(9);
+    let buno = id.slice(0,6);
+    let date = moment().add(dateNumber,'days').format('MMDD');
+    let dateElement = $('#date'+date);
+    let currentFlights = dateElement.data('currentFlights');
+    currentFlights= currentFlights + numberChange;
+    dateElement.data('currentFlights', currentFlights);
+    let spinnerNumber=parseInt(dateNumber)+1;
+    let spinnerValue = $('#opsSpinner'+spinnerNumber).val();
+
+    if(currentFlights<spinnerValue){
+        dateElement.css('backgroundColor', '#CC5500');
+    }else{
+        dateElement.css('backgroundColor', '#454545');
+    }
+
+
+
+}
+
+
+function assignHours(proposedFlightHours, id){
+    let buno = id.slice(0,6);
+    let dateNumber = id.slice(9);
+    let bunoEle = $('#label'+buno);
+    let dynamicCompArray = bunoEle.data('dynamicComponents');
+    let currentlyBudgetedHours = bunoEle.data('budgetedHours');
+    currentlyBudgetedHours = parseInt(currentlyBudgetedHours)+parseInt(proposedFlightHours);
+    bunoEle.data('budgetedHours', currentlyBudgetedHours);
+    let currentFlighthours= parseInt(dynamicCompArray[0][8]);
+
+    let flightHourConvertedArray = new Array()
+    for(i=1;i<8; ++i){
+        flightHourConvertedArray[i]= currentFlighthours + parseInt(dynamicCompArray[0][i])
+
+    }
+    let currentDate = moment().add(dateNumber, 'days').format('MMDD');
+    let currentFlightSchedule = new Array;
+        currentFlightSchedule=bunoEle.data('flightScheduleArray');
+
+    if(proposedFlightHours<0){
+        let index = currentFlightSchedule.indexOf(currentDate+proposedFlightHours*-1);
+        currentFlightSchedule.splice(index,1)
+    }else{
+    currentFlightSchedule.push(currentDate+proposedFlightHours);
+    currentFlightSchedule.sort()
+    }
+    bunoEle.data('flightScheduleArray', currentFlightSchedule);
+    //console.log(bunoEle.data())
+    renderFlightSchedule(proposedFlightHours, flightHourConvertedArray, buno)
+
+}
+
+function renderFlightSchedule(proposedFlightHours, requirementArray, buno){
+
+
+    //console.log(proposedFlightHours)
+    let bunoEle = $('#label'+buno);
+    let flightSchedule = bunoEle.data('flightScheduleArray')
+    let flightScheduleLength = flightSchedule.length
+    //console.log(flightSchedule);
+    let componentArray = bunoEle.data('dynamicComponents');
+    let currentHours = parseInt(componentArray[0][8]);
+    let totalHours = currentHours;
+    //console.log(requirementArray);
+    console.log(proposedFlightHours)
+    for(i=0;i<flightScheduleLength;++i){
+        let flightEntry = flightSchedule[i];
+        let flightHours = parseInt(flightEntry.slice(4,6));
+        //console.log(flightHours)
+        totalHours=totalHours+flightHours;
+        console.log(totalHours)
+        let dateOfFlight = flightEntry.slice(0,4);
+        //console.log(dateOfFlight)
+        let currentFlightDate = flightEntry.slice(0,4);
+        let currentFlightDay = currentFlightDate.slice(2,4);
+        let currentFlightMonth = currentFlightDate.slice(0,2);
+        currentFlightMonth = currentFlightMonth-1;
+        let currentYear= moment().year();
+        currentFlightDate = moment([currentYear,currentFlightMonth, currentFlightDay]);
+        let today = moment();
+        let difference = currentFlightDate.diff(today,'days') + 1;
+        //console.log(difference)
+
+        for(j=1;j<8;++j){
+            let requiredHours = requirementArray[j];
+            let scheduledStatus = $('#SQDImage').data('scheduledArray');
+            //currentStatus=scheduledStatus[j]
+            //console.log('ScheduledStatus'+scheduledStatus[j]);
+            console.log('ProposedFlightHours'+proposedFlightHours)
+
+            if((totalHours-flightHours)<requiredHours && totalHours+flightHours>requiredHours&& scheduledStatus[j] == false){
+                $('#'+buno+'Day'+difference).append('<i class="material-icons">access_time</i>')
+                scheduledStatus[j] = true;
+                $('#SQDImage').data('scheduledArray', scheduledStatus);
+                $('#SQDImage').data('dayScheduled', difference)
+            }else if(proposedFlightHours<0 && totalHours <requiredHours && scheduledStatus[j]==true){
+                scheduledStatus[j]=false;
+                let dayScheduled= $('#SQDImage').data('dayScheduled');
+                $('#'+buno+'Day'+dayScheduled).html('<i class="material-icons">airplanemode_active flight_takeoff</i>7');
+
+
+                console.log('got Here')
+            }
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+}
+
+
+
+
+function loadBunoDetails(id){
+    bunoQuery(id);
+    selectedBunoIndicator(id)
+    $('#'+id).data('clicked', true)
+}
+function bunoQuery(id){
+    let selectedBuno = id.slice(5,11);
+
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            console.log('OUT IT WENT HOPEFULLY');
+            let outputArray = JSON.parse(xhttp.responseText);
+
+            displayBunoDynInfo(outputArray);
+        }
+    };
+
+    xhttp.open("POST", "scripts/dynamicComponentsQuery.php", true);
+    xhttp.send(JSON.stringify(selectedBuno));
+
+}
+function displayBunoDynInfo(inputArray){
+    let buno=inputArray[0][0];
+    $('#bunoDisplay').html(buno);
+    let rudderActuator = inputArray[0][5];
+    $('#rudderActuatorDisplay').html(rudderActuator);
+    let totalFlightHours = inputArray[0][8];
+    $('#totalFlightHoursDisplay').html(totalFlightHours);
+    let phaseHours = inputArray[0][1];
+    $('#phaseHoursDisplay').html(phaseHours);
+    let stabActuator= inputArray[0][6];
+    $('#stabActuatorDisplay').html(stabActuator);
+    let f404Combustionhours = inputArray[0][7];
+    $('#f404CombustionSectionDisplay').html(f404Combustionhours);
+    let currentlyScheduledHours = $('#label'+buno).data('budgetedHours')
+    $('#currentlyScheduledHoursDisplay').html(currentlyScheduledHours)
+}
+
+function selectedBunoIndicator(id){
+    let lastBuno =$('#SQDImage').data('currentlySelectedBuno');
+    if(lastBuno!=id){
+        $('#'+lastBuno).css('background-color', '#454545');
+        $('#'+lastBuno).css('color', 'white')
+    }
+        $('#'+id).css('background-color','tan');
+        $('#'+id).css('color','black');
+        $('#SQDImage').data('currentlySelectedBuno', id);
+}
+
+
+
+function testFunction(){
+    //$('#date0130').data('currentFlights', 0);
+    let flightScheduleArray = new Array();
+    $('#label123456').data('flightScheduleArray', flightScheduleArray);
+    let scheduledArray = new Array();
+    scheduledArray = [false,false,false,false,false,false,false,false]
+    $('#SQDImage').data('scheduledArray', scheduledArray);
+    console.log(scheduledArray)
+
+}
+function testFunction2(id){
+    let today = moment()
+    console.log(today)
 }

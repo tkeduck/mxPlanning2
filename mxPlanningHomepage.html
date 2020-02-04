@@ -18,8 +18,80 @@
             Maintenance Planning Tool
         </section>
         <section id="leftInfoPanel">
-                <section id="mxEventsOnDate">
-                    Test
+                <section id="dynamicComponentDisplay">
+                    <section id="BUNO">
+                        BUNO<br>
+                        <div id="bunoDisplay">
+                            -
+                        </div>
+                    </section>
+                    <section id="totalFlightHours">
+                        Total Flight Hours<br>
+                        <div id="totalFlightHoursDisplay">
+                            -
+                        </div>
+                    </section>
+                    <section id="phase">
+                        Hours Until Next Phase<br>
+                        <div id="phaseHoursDisplay">
+                            -
+                        </div>
+                        <div id="nextPhase">
+                            Next Phase
+                            <div id="nextPhaseDisplay">
+                                -
+                            </div>
+                        </div>
+                        <div id="nextPhaseDateScheduled">
+                            Date Scheduled
+                            <div id="nextPhaseDateScheduledDisplay">
+                                -
+                            </div>
+                        </div>
+                    </section>
+                    <section id="rudderActuator">
+                        Hours remaining on Rudder Actuator<br>
+                        <div id="rudderActuatorDisplay">
+                            -
+                        </div>
+                        <div id="rudderActuatorDateScheduled">
+                            Date Scheduled
+                            <div id="rudderActuatorDateScheduledDisplay">
+                                -
+                            </div>
+                        </div>
+                    </section>
+                    <section id="stabActuator">
+                        Hours Remaining on Stab Actuator<br>
+                        <div id="stabActuatorDisplay">
+                            -
+                        </div>
+                        <div id="stabActuatorDateScheduled">
+                            Date Scheduled
+                            <div id="stabActuatorDateScheduledDisplay">
+                                -
+                            </div>
+                        </div>
+                    </section>
+                    <section id="f404CombustionSection">
+                        Hours Remaining on F404 Combustion Section<br>
+                        <div id="f404CombustionSectionDisplay">
+                            -
+                        </div>
+                        <div id="f404dateScheduled">
+                            Date Scheduled
+                            <div id="f404dateScheduledDisplay">
+                                -
+                            </div>
+                        </div>
+                    </section>
+                <section id="currentlyScheduledHours">
+                    Currently Scheduled Hours
+                    <div id="currentlyScheduledHoursDisplay">
+                        -
+                    </div>
+                </section>
+
                 </section>
                 <section id="bunoConfigInfo">
                     Test
@@ -65,7 +137,7 @@
                 <button id="testButton2" onclick="testFunction2(this.id)">Click ME for other TEST</button>
                 <span id="other">
                     <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox1" id="checkbox1">
-                    <label for="checkbox1">Package 1</label>
+                    <label for="checkbox1">Air to Air</label>
                     <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox2" id="checkbox2">
                     <label for="checkbox2">Package 2</label>
                     <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox3" id="checkbox3">
@@ -81,7 +153,9 @@
                 <section id="detDisplay">
                     <button id="expectedFlightDateButton" onclick="expectedFlightDateTool()">
                         <i class="material-icons">flight_takeoff</i>
+
                     </button>
+                    <input id="efdHoursSpinner">
                 </section>
                 <section id="calendarDisplay">
                         <div id="bunoLabel">
@@ -89,7 +163,7 @@
                             <br>
                             BUNO
                         <br>
-
+                            MODEX
                         </div>
                         <section id="bunoLabels">
 

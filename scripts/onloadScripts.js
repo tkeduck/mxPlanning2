@@ -1,5 +1,5 @@
 /*
-    Need to pull in all associates squadrons to populate the dropdown, future iterations will remove the squadron
+    Need to pull in all associated squadrons to populate the dropdown, future iterations will remove the squadron
         dropdown and be driven by user roles from a CAC, functions are called from controlling function
  */
 function initialLoading(){
@@ -41,15 +41,27 @@ requirement for any given day
  */
 function addDateLabels(){
     let todayDate = moment().add(-3,'days').format("MM/DD");
+    let idtodayDate = moment().add(-3,'days').format("MMDD");
     let weekdayName = moment().add(-3,'days').format('dddd');
     for(i=-2; i<37; ++i){
-        $('#dateContainter').append('<span id= '+todayDate+' class="dateLabels">'+weekdayName+'<br>'+todayDate+'<br><input id="opsSpinner'+i+'" class="spinner"></span>');
+        if(i==-2||i==-1||i==0){
+            if(i==0){
+                $('#dateContainter').append('<span id="date'+idtodayDate+'" class="dateLabels lastPastDates">'+weekdayName+'<div>'+todayDate+'</div></span>');
+            }else{
+                $('#dateContainter').append('<span id="date'+idtodayDate+'" class="dateLabels pastDates">'+weekdayName+'<div>'+todayDate+'</div></span>');
+            }
+        }else{
+            $('#dateContainter').append('<span id="date'+idtodayDate+'" class="dateLabels">'+weekdayName+'<br>'+todayDate+'<br><input id="opsSpinner'+i+'" class="spinner"></span>');
+        }
         if(i==36){
             $('#dateContainter').append('<br>')
         $('.spinner').spinner()
         }
+        $('#date'+idtodayDate).data('currentFlights', 0);
         todayDate = moment().add(i,'days').format('MM/DD');
+        idtodayDate=moment().add(i,'days').format('MMDD');
         weekdayName = moment().add(i, 'days').format('dddd');
+
     }
 
 

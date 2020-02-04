@@ -43,8 +43,8 @@ Below is the left information panel styling
 #leftInfoPanel{
     background-color: #454545;
     grid-area: leftInfoPanel;
-    grid-template-rows: 2fr 1fr 1fr;
-    grid-template-areas: "mxEventsOnDate"
+    grid-template-rows: 3fr 1fr 1fr;
+    grid-template-areas: "dynamicComponentsDisplay"
                           "bunoConfigInfo"
                           "bunoMXInfo";
     min-width: 400px;
@@ -53,11 +53,80 @@ Below is the left information panel styling
     display: grid;
     border: solid #909090;
 }
-#mxEventsOnDate{
-    grid-area: mxEventsOnDate;
+#dynamicComponentDisplay{
+    grid-area: dynamicComponentsDisplay;
+    display: grid;
+    grid-template-areas: 'BUNO totalFlightHours'
+    'phase rudderActuator'
+    'stabActuator f404CombustionSection'
+'currentlyScheduledHours currentlyScheduledHours';
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
     background-color: #454545;
-    min-height: 350px;
+    min-height: 461px;
+    font-size: 25px;
+    color: #e9e9e9;
+    text-align: center;
+
 }
+#currentlyScheduledHours{
+    grid-area: currentlyScheduledHours;
+    text-align: center;
+    color: white;
+    border:solid;
+    border-radius: 30px;
+    display: inline-block;
+}
+
+.dynamicComponent{
+    color: orange;
+}
+#BUNO{
+    text-align: center;
+    color: white;
+    grid-area: BUNO;
+    border:solid;
+    border-radius: 30px;
+    display: inline-block;
+}
+#bunoDisplay{
+
+    width: 150px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+#totalFlightHours{
+    grid-area: totalFlightHours;
+    border:solid;
+    border-radius: 30px;
+
+}
+#totalFlightHoursDisplay{
+
+}
+#phase{
+    grid-area: phase;
+    border:solid;
+    border-radius: 30px;
+}
+#rudderActuator{
+    grid-area: rudderActuator;
+    border:solid;
+    border-radius: 30px;
+}
+#stabActuator{
+    grid-area: stabActuator;
+    border:solid;
+    border-radius: 30px;
+}
+#f404CombustionSection{
+    grid-area: f404CombustionSection;
+    border:solid;
+    border-radius: 30px;
+}
+
 #bunoConfigInfo{
     grid-area: bunoConfigInfo;
     background-color: #454545;
@@ -248,13 +317,14 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
 }
 
 .dateLabels{
-
+    color: white;
     min-width: 100px;
     max-width: 100px;
     background-color: #454545;
     border: solid;
     display: inline-block;
     text-align: center;
+    border-color: black;
 }
 .spinner{
     width: 25px;
@@ -281,8 +351,24 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
     height: 10px;
 
 }
-.bunoCalendarElement{
+.pastDates{
+    background-color: lightgrey;
+    line-height: 35px;
+    color: black;
 
+
+}
+.lastPastDates{
+    background-color: lightgrey;
+    line-height: 35px;
+    color: black;
+    border-right-color: tan;
+    border-right-width: 5px;
+}
+
+
+
+.bunoCalendarElement{
     color: white;
     height: 50px;
     width: 100px;
@@ -292,6 +378,7 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
     text-align: center;
     background-color: #454545;
     border-radius: 25px;
+    font-size: 20px;
 }
 .mxWindow{
     color: black;
@@ -318,6 +405,11 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
     display: inline-block;
     text-align: center;
     line-height: 39px;
+}
+
+.lastPastDatesCalendarEle{
+    border-right-color: tan !important;
+    border-right-width: 5px;
 
 }
 .material-icons{
@@ -364,7 +456,10 @@ Styling for the calendar including Dates,BUNOs and Calendar Elements
     text-align: center;
     background-color: yellow;
 }
-
+#efdHoursSpinner{
+    display: none;
+    width: 23px;
+}
 
 /*</editor-fold>*/
 
