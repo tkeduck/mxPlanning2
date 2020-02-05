@@ -55,7 +55,8 @@ function addDateLabels(){
         }
         if(i==36){
             $('#dateContainter').append('<br>')
-        $('.spinner').spinner()
+        $('.spinner').spinner();
+
         }
         $('#date'+idtodayDate).data('currentFlights', 0);
         todayDate = moment().add(i,'days').format('MM/DD');

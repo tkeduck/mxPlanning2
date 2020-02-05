@@ -56,7 +56,8 @@ function calendarQuery(){
 function addCalendarElements(inputArray){
      // Using current date to indicate the start of the calendar, will cycle through maintenance events to test if
      // current date is equal to a maintenance date in order to create a maintenance calendar element
-     let numberOfBunos = inputArray.length;
+
+    let numberOfBunos = inputArray.length;
      let mxWindowStartArray = new Array();
      let currentDateMXItems = new Array();
      for(i=0; i<numberOfBunos; ++i){
@@ -70,8 +71,8 @@ function addCalendarElements(inputArray){
          $('#bunoLabels').append(bunoHtml);
          $('#label'+currentBuno).data('numMXWindows', 0);
          $('#label'+currentBuno).data('clicked', false);
-         bunoQueryTwo(currentBuno);
-
+         //bunoQueryTwo(currentBuno);
+         //flightScheduleQuery(currentBuno);
          mxWindowStartArray=[];
          //Converting the maintenance due date into a window start date in order to render to the calendar
          for(k=2; k<12; ++k){
@@ -127,7 +128,7 @@ function addCalendarElements(inputArray){
 
             } else if(mxWindowCounter>0){
                  calendarEleClass = 'mxWindow';
-                 calendarEleLabel = '<i class="material-icons">aspect_ratio airplanemode_active</i>';
+                 calendarEleLabel = '<i class="material-icons">build</i>';
                  if(mxWindowCounter==1){
                      lastElement=true
                  }
@@ -173,26 +174,58 @@ function addCalendarElements(inputArray){
             $('#label'+currentBuno).data('budgetedHours',0)
              if(j==-1){
                  $('#'+currentBuno+'Day'+j).addClass('lastPastDatesCalendarEle');
-                 console.log('test')
+                 //console.log('test')
              }
 
         }
+         //renderFlightSchedule(currentBuno)
+         flightScheduleQuery(currentBuno);
      }
     $('.bunoCalendarElement').on('click', function(){
         let id = $(this).attr('id');
         loadBunoDetails(id)
     });
+
 }
-function bunoQueryTwo(buno){
-    //let selectedBuno = id.slice(5,11);
 
-
+function flightScheduleQuery(buno){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-            console.log('OUT IT WENT HOPEFULLY');
+            //console.log(JSON.parse(xhttp.responseText));
             let outputArray = JSON.parse(xhttp.responseText);
-            storeBunoDynInfo(outputArray, buno);
+            storeFlightSchedule(outputArray, buno);
+            //renderFlightSchedule(outputArray, buno)
+
+        }
+    };
+
+    xhttp.open("POST", "scripts/flightScheduleQuery.php", true);
+    xhttp.send(JSON.stringify(buno));
+
+
+}
+function storeFlightSchedule(flightSchedule, buno){
+    let flattenedArray = new Array()
+    for(i=0; i<flightSchedule.length;++i){
+        flattenedArray[i]=flightSchedule[i][0]
+    }
+    bunoQueryTwo(flightSchedule, buno,);
+    let bunoEle = $('#label'+buno);
+    bunoEle.data('flightSchedule', flattenedArray);
+
+}
+
+
+function bunoQueryTwo(flightSchedule,buno){
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            let dynamicInfoArray = JSON.parse(xhttp.responseText);
+            storeBunoDynInfo(dynamicInfoArray, buno);
+            let scheduledArray = new Array(7)
+            scheduledArray.fill(false)
+            renderFlightSchedule(flightSchedule,dynamicInfoArray,buno,scheduledArray)
         }
     };
 
@@ -202,19 +235,8 @@ function bunoQueryTwo(buno){
 }
 function storeBunoDynInfo(inputArray, buno){
     let bunoEle = $('#label'+buno);
+    bunoEle.data('currentFlightHours', inputArray[0][8])
     bunoEle.data('dynamicComponents', inputArray);
-    /*
-        bunoEle.data('phaseA', inputArray[0][1])
-        bunoEle.data('phaseB', inputArray[0][2])
-        bunoEle.data('phaseC', inputArray[0][3])
-        bunoEle.data('phaseD', inputArray[0][4])
-        bunoEle.data('rudderActuator', inputArray[0][5])
-        bunoEle.data('stabActuator', inputArray[0][6])
-        bunoEle.data('f404CombustionSection', inputArray[0][7])
-        bunoEle.data('totalFlightHours', inputArray[0][8])
-        */
-
-
 
 }
 
@@ -538,7 +560,6 @@ function populateOpsSpinners(){
     let squadronName = squadronSelect.value;
     var xhttp = new XMLHttpRequest();
     let outputArray = new Array;
-
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             let outputArray = JSON.parse(xhttp.responseText);
@@ -593,6 +614,7 @@ function saveOpsDetails(){
 
 
 function expectedFlightDateTool(){
+
     if($('#expectedFlightDateButton').data('clicked')==true){
         $('#expectedFlightDateButton').data('clicked', false);
         $('#expectedFlightDateButton').css('background-color', 'lightgrey');
@@ -601,6 +623,7 @@ function expectedFlightDateTool(){
         $('#efdHoursSpinner').css('display', 'none')
 
     }else if($('#expectedFlightDateButton').data('clicked')==false){
+        clearFlightCount()
         $('#expectedFlightDateButton').data('clicked',true);
         $('#expectedFlightDateButton').css('background-color', 'tan');
         var spinner = $('#efdHoursSpinner').spinner();
@@ -614,6 +637,7 @@ function expectedFlightDateTool(){
                 $('#' + id).data('expectedFlightDate', true);
                 assignHours(flightHours, id)
                 manageFlightNumber(1,id)
+                clearFlightCount()
             } else if($('#'+id).data('expectedFlightDate')==true){
                 $('#'+id).html('<i class="material-icons">build</i>');
                 $('#' + id).data('expectedFlightDate', false);
@@ -621,6 +645,7 @@ function expectedFlightDateTool(){
                 let flightHours = $('#efdHoursSpinner').val();
                 flightHours = flightHours*-1;
                 assignHours(flightHours, id)
+                clearFlightCount()
             }
         });
 
@@ -632,15 +657,18 @@ function expectedFlightDateTool(){
                 $('#' + id).data('expectedFlightDate', true);
                 assignHours(flightHours, id)
                 manageFlightNumber(1,id)
+                clearFlightCount()
 
 
             } else if($('#'+id).data('expectedFlightDate')==true){
                 $('#'+id).html('<i class="material-icons">airplanemode_active</i>');
                 $('#' + id).data('expectedFlightDate', false);
-                let flightHours = $('#efdHoursSpinner').val();
+                //let flightHours = $('#efdHoursSpinner').val();
                 manageFlightNumber(-1,id)
-                flightHours = flightHours*-1
+               let  flightHours = $('#'+id).data('expectedFlightHours')*-1
+                //console.log(flightHours)
                 assignHours(flightHours, id)
+                clearFlightCount()
             }
         });
 
@@ -663,9 +691,9 @@ function manageFlightNumber(numberChange, id){
     let spinnerValue = $('#opsSpinner'+spinnerNumber).val();
 
     if(currentFlights<spinnerValue){
-        dateElement.css('backgroundColor', '#CC5500');
+        //dateElement.css('backgroundColor', '#CC5500');
     }else{
-        dateElement.css('backgroundColor', '#454545');
+        //dateElement.css('backgroundColor', '#454545');
     }
 
 
@@ -690,7 +718,7 @@ function assignHours(proposedFlightHours, id){
     }
     let currentDate = moment().add(dateNumber, 'days').format('MMDD');
     let currentFlightSchedule = new Array;
-        currentFlightSchedule=bunoEle.data('flightScheduleArray');
+        currentFlightSchedule=bunoEle.data('flightSchedule');
 
     if(proposedFlightHours<0){
         let index = currentFlightSchedule.indexOf(currentDate+proposedFlightHours*-1);
@@ -699,67 +727,84 @@ function assignHours(proposedFlightHours, id){
     currentFlightSchedule.push(currentDate+proposedFlightHours);
     currentFlightSchedule.sort()
     }
-    bunoEle.data('flightScheduleArray', currentFlightSchedule);
-    //console.log(bunoEle.data())
-    renderFlightSchedule(proposedFlightHours, flightHourConvertedArray, buno)
+    bunoEle.data('flightSchedule', currentFlightSchedule);
+    let scheduledArray = bunoEle.data('scheduledArray')
+    let otherCurrentFlightSchedule = new Array()
+    //console.log(currentFlightSchedule)
+    for(x=0;x<currentFlightSchedule.length;++x){
+        let flightEntry = currentFlightSchedule[x]
+        otherCurrentFlightSchedule.push([flightEntry, ''])
+    }
+
+
+
+    renderFlightSchedule(otherCurrentFlightSchedule,dynamicCompArray,buno,scheduledArray)
+
 
 }
 
-function renderFlightSchedule(proposedFlightHours, requirementArray, buno){
+function renderFlightSchedule(flightSchedule,dynamicInfoArray,buno,scheduledArray){
+    let dynamicCompArrayAdjusted = new Array()
 
+    for(i=1;i<8;++i){
+        let currentHours = parseInt(dynamicInfoArray[0][8])
 
-    //console.log(proposedFlightHours)
-    let bunoEle = $('#label'+buno);
-    let flightSchedule = bunoEle.data('flightScheduleArray')
-    let flightScheduleLength = flightSchedule.length
-    //console.log(flightSchedule);
-    let componentArray = bunoEle.data('dynamicComponents');
-    let currentHours = parseInt(componentArray[0][8]);
-    let totalHours = currentHours;
-    //console.log(requirementArray);
-    console.log(proposedFlightHours)
-    for(i=0;i<flightScheduleLength;++i){
-        let flightEntry = flightSchedule[i];
-        let flightHours = parseInt(flightEntry.slice(4,6));
-        //console.log(flightHours)
-        totalHours=totalHours+flightHours;
-        console.log(totalHours)
-        let dateOfFlight = flightEntry.slice(0,4);
-        //console.log(dateOfFlight)
+        let adjustedMXHours = currentHours + parseInt(dynamicInfoArray[0][i]);
+        dynamicCompArrayAdjusted[i-1]=adjustedMXHours
+    }
+    let bunoEle = $('#label'+buno)
+    let currentHours = parseInt(bunoEle.data('currentFlightHours'));
+    let totalAssignedHours = currentHours
+
+    for(i=0;i<flightSchedule.length;++i){
+        let flightEntry = flightSchedule[i][0];
+        let flightHours= flightEntry.slice(4,6);
         let currentFlightDate = flightEntry.slice(0,4);
+        let todayFlights = $('#date'+currentFlightDate).data('currentFlights');
+        todayFlights = todayFlights+1;
+        $('#date'+currentFlightDate).data('currentFlights', todayFlights);
+
         let currentFlightDay = currentFlightDate.slice(2,4);
         let currentFlightMonth = currentFlightDate.slice(0,2);
         currentFlightMonth = currentFlightMonth-1;
         let currentYear= moment().year();
-        currentFlightDate = moment([currentYear,currentFlightMonth, currentFlightDay]);
-        let today = moment();
-        let difference = currentFlightDate.diff(today,'days') + 1;
-        //console.log(difference)
+        currentFlightDate = moment([currentYear,currentFlightMonth, currentFlightDay]).format('MMDD');
+        let today = moment().format('MMDD');
+        //let difference = currentFlightDate.diff(today,'days')+1;
 
-        for(j=1;j<8;++j){
-            let requiredHours = requirementArray[j];
-            let scheduledStatus = $('#SQDImage').data('scheduledArray');
-            //currentStatus=scheduledStatus[j]
-            //console.log('ScheduledStatus'+scheduledStatus[j]);
-            console.log('ProposedFlightHours'+proposedFlightHours)
+        let difference =currentFlightDate-today
+        let calendarEle = $('#'+buno+'Day'+difference)
+        totalAssignedHours=totalAssignedHours+parseInt(flightHours)
+        let htCompHtml = ''
+        for(j=0;j<8;++j){
+            let scheduledStatus = scheduledArray[j];
+            let hoursRequired = dynamicCompArrayAdjusted[j];
 
-            if((totalHours-flightHours)<requiredHours && totalHours+flightHours>requiredHours&& scheduledStatus[j] == false){
-                $('#'+buno+'Day'+difference).append('<i class="material-icons">access_time</i>')
-                scheduledStatus[j] = true;
-                $('#SQDImage').data('scheduledArray', scheduledStatus);
-                $('#SQDImage').data('dayScheduled', difference)
-            }else if(proposedFlightHours<0 && totalHours <requiredHours && scheduledStatus[j]==true){
-                scheduledStatus[j]=false;
-                let dayScheduled= $('#SQDImage').data('dayScheduled');
-                $('#'+buno+'Day'+dayScheduled).html('<i class="material-icons">airplanemode_active flight_takeoff</i>7');
-
-
-                console.log('got Here')
+            if(totalAssignedHours>=hoursRequired && scheduledStatus===false){
+                console.log(totalAssignedHours)
+                scheduledArray[j]=true;
+                htCompHtml = 'access_time'
+            }else if(totalAssignedHours<hoursRequired){
+                scheduledArray[j]=false
             }
-
-
-
         }
+
+
+        calendarEle.data('expectedFlightDate', true);
+        calendarEle.data('expectedFlightHours', flightHours);
+        if($('#'+buno+'Day'+difference).hasClass('mc')){
+            calendarEle.html('<i class="material-icons">airplanemode_active'+htCompHtml+' flight_takeoff</i>'+flightHours)
+
+        }else{
+            calendarEle.html('<i class="material-icons">build'+htCompHtml+' flight_takeoff</i>'+flightHours)
+            calendarEle.data('expectedFlightDate', true)
+        }
+        bunoEle.data('scheduledArray', scheduledArray)
+
+
+
+
+
 
 
 
@@ -767,6 +812,29 @@ function renderFlightSchedule(proposedFlightHours, requirementArray, buno){
 
 
 
+
+}
+function clearFlightCount(){
+    for(i=0;i<36;++i){
+        let date = moment().add(i, 'days').format('MMDD');
+        $('#date'+date).data('currentFlights',0)
+
+    }
+
+}
+function colorDateLabels(){
+    for(i=0;i<36;++i){
+        let date = moment().add(i, 'days').format('MMDD');
+        let dateEle = $('#date'+date)
+        let scheduledFlights = dateEle.data('currentFlights')
+        let neededFlights = $('#opsSpinner'+i).val()
+        if(scheduledFlights<neededFlights){
+            dateEle.css('background-color', 'red')
+        }else{
+            dateEle.css('background-color', '#454545')
+        }
+
+    }
 
 }
 
@@ -827,16 +895,10 @@ function selectedBunoIndicator(id){
 
 
 function testFunction(){
-    //$('#date0130').data('currentFlights', 0);
-    let flightScheduleArray = new Array();
-    $('#label123456').data('flightScheduleArray', flightScheduleArray);
-    let scheduledArray = new Array();
-    scheduledArray = [false,false,false,false,false,false,false,false]
-    $('#SQDImage').data('scheduledArray', scheduledArray);
-    console.log(scheduledArray)
+colorDateLabels()
 
 }
-function testFunction2(id){
-    let today = moment()
-    console.log(today)
+function testFunction2(){
+    console.log($('#date0205').data())
+
 }
