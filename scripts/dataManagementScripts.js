@@ -784,7 +784,7 @@ function renderFlightSchedule(flightSchedule,dynamicInfoArray,buno,scheduledArra
             let hoursRequired = dynamicCompArrayAdjusted[j];
 
             if(totalAssignedHours>=hoursRequired && scheduledStatus===false){
-                console.log(totalAssignedHours)
+                //console.log(totalAssignedHours)
                 scheduledArray[j]=true;
                 htCompHtml = 'access_time'
                 toolTip = determineMxItemTitle(j);
@@ -1034,8 +1034,8 @@ function storeMxDates(mxArray){
 }
 
 function testFunction(){
-    console.log($('#label123456').data())
-//saveFlightSchedule()
+    //console.log($('#label123456').data())
+    saveFlightSchedule()
 }
 function testFunction2(){
     $(document).tooltip()
