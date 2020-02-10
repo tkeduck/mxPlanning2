@@ -127,11 +127,52 @@ Below is the left information panel styling
     border-radius: 30px;
 }
 
-#bunoConfigInfo{
+#mxDateDisplay{
     grid-area: bunoConfigInfo;
     background-color: #454545;
     min-height: 200px;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas: 'eightyFourDay oneTwelveDay oneSixEightDay'
+                            'threeThreeSixDay threeSixFiveDay sevenTwoEightDay';
+    font-size: 17px;
+    color: #e9e9e9;
+    text-align: center;
 }
+.calendarMxDisplay{
+    border:solid;
+    border-radius: 30px;
+    padding-top: 3px;
+}
+.calendarMxDateDisplay{
+    padding-top: 12px;
+}
+
+#eightyFourDay{
+    grid-area: eightyFourDay;
+}
+
+#oneTwelveDay{
+    grid-area: oneTwelveDay;
+}
+#oneSixEightDay{
+    grid-area: oneSixEightDay;
+}
+#threeThreeSixDay{
+    grid-area: threeThreeSixDay;
+}
+#threeSixFiveDay{
+    grid-area: threeSixFiveDay;
+}
+#sevenTwoEightDay{
+    grid-area: sevenTwoEightDay;
+
+}
+
+
+
+
 #bunoMXInfo{
     grid-area: bunoMXInfo;
     background-color: #454545;

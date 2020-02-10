@@ -46,6 +46,7 @@ function calendarQuery(){
             outputArray = JSON.parse(xhttp.responseText);
             addCalendarElements(outputArray);
             getBUNOConfig(outputArray)
+            storeMxDates(outputArray)
         }
     };
     xhttp.open("POST", "scripts/calendarquery.php", true);
@@ -257,7 +258,7 @@ function storeBunoDynInfo(inputArray, buno){
 
  }
  function dragFunction(idName){
-     let nameParent =$('#'+idName).parent();
+    let nameParent =$('#'+idName).parent();
      let parentId = nameParent[0].id;
      let mxWindowNumber = parentId.substr(-1);
      let buno = idName.substr(0,6);
@@ -755,7 +756,8 @@ function renderFlightSchedule(flightSchedule,dynamicInfoArray,buno,scheduledArra
     let bunoEle = $('#label'+buno)
     let currentHours = parseInt(bunoEle.data('currentFlightHours'));
     let totalAssignedHours = currentHours
-
+    clearLeftInfoPanel()
+    let toolTip=''
     for(i=0;i<flightSchedule.length;++i){
         let flightEntry = flightSchedule[i][0];
         let flightHours= flightEntry.slice(4,6);
@@ -772,9 +774,10 @@ function renderFlightSchedule(flightSchedule,dynamicInfoArray,buno,scheduledArra
         let today = moment().format('MMDD');
         //let difference = currentFlightDate.diff(today,'days')+1;
 
-        let difference =currentFlightDate-today
+        let difference =currentFlightDate-today;
         let calendarEle = $('#'+buno+'Day'+difference)
         totalAssignedHours=totalAssignedHours+parseInt(flightHours)
+        bunoEle.data('budgetedHours', totalAssignedHours-currentHours)
         let htCompHtml = ''
         for(j=0;j<8;++j){
             let scheduledStatus = scheduledArray[j];
@@ -784,16 +787,18 @@ function renderFlightSchedule(flightSchedule,dynamicInfoArray,buno,scheduledArra
                 console.log(totalAssignedHours)
                 scheduledArray[j]=true;
                 htCompHtml = 'access_time'
+                toolTip = determineMxItemTitle(j);
+                populateLeftInfoPanel(j,currentFlightDate,buno)
             }else if(totalAssignedHours<hoursRequired){
                 scheduledArray[j]=false
             }
         }
-
+        updateScheduledHoursDisplay(buno)
 
         calendarEle.data('expectedFlightDate', true);
         calendarEle.data('expectedFlightHours', flightHours);
         if($('#'+buno+'Day'+difference).hasClass('mc')){
-            calendarEle.html('<i class="material-icons">airplanemode_active'+htCompHtml+' flight_takeoff</i>'+flightHours)
+            calendarEle.html('<i title="'+toolTip+'" class="material-icons">airplanemode_active'+htCompHtml+' flight_takeoff</i>'+flightHours)
 
         }else{
             calendarEle.html('<i class="material-icons">build'+htCompHtml+' flight_takeoff</i>'+flightHours)
@@ -801,19 +806,30 @@ function renderFlightSchedule(flightSchedule,dynamicInfoArray,buno,scheduledArra
         }
         bunoEle.data('scheduledArray', scheduledArray)
 
-
-
-
-
-
-
-
     }
 
-
-
-
 }
+function determineMxItemTitle(mxNumber){
+    let toolTip = ''
+    if(mxNumber==0){
+        toolTip='Phase A'
+    }else if(mxNumber==1){
+        toolTip='Phase b'
+    }else if(mxNumber==2){
+        toolTip='Phase C'
+    }else if(mxNumber==3){
+        toolTip='Phase D'
+    }else if(mxNumber == 4){
+        toolTip='Rudder Actuator'
+    }else if(mxNumber==5){
+        toolTip='Stab Actuator'
+    }else if(mxNumber==6){
+        toolTip= 'F404 Combustion Section'
+    }
+    return toolTip
+}
+
+
 function clearFlightCount(){
     for(i=0;i<36;++i){
         let date = moment().add(i, 'days').format('MMDD');
@@ -837,6 +853,45 @@ function colorDateLabels(){
     }
 
 }
+function clearLeftInfoPanel(){
+    $('#nextPhaseDateScheduledDisplay').html('-')
+    $('#rudderActuatorDateScheduledDisplay').html('-')
+    $('#stabActuatorDateScheduledDisplay').html('-')
+    $('#f404dateScheduledDisplay').html('-')
+}
+
+function updateScheduledHoursDisplay(buno){
+    let bunoEle = $('#label'+buno);
+    let bunoClickedStatus =bunoEle.data('clicked');
+    if(bunoClickedStatus){
+        $('#currentlyScheduledHoursDisplay').html(bunoEle.data('budgetedHours'))
+    }
+}
+
+function populateLeftInfoPanel(mxNumber,dateScheduled, buno){
+    let bunoEle = $('#label'+buno);
+    let bunoClickedStatus =bunoEle.data('clicked');
+
+
+        let mxItemEle = ''
+        if (mxNumber == 0 || mxNumber == 1 || mxNumber == 2 || mxNumber == 3) {
+            mxItemEle = $('#nextPhaseDateScheduledDisplay')
+            bunoEle.data('phaseDate', dateScheduled)
+        } else if (mxNumber == 4) {
+            mxItemEle = $('#rudderActuatorDateScheduledDisplay')
+            bunoEle.data('rudderActDate', dateScheduled)
+        } else if (mxNumber == 5) {
+            mxItemEle = $('#stabActuatorDateScheduledDisplay')
+            bunoEle.data('stabActDate', dateScheduled)
+        } else if (mxNumber == 6) {
+            mxItemEle = $('#f404dateScheduledDisplay')
+            bunoEle.data('f404Date', dateScheduled)
+        }
+    if(bunoClickedStatus) {
+        mxItemEle.html(dateScheduled.slice(0, 2) + '/' + dateScheduled.slice(2, 4));
+        $('#currentlyScheduledHoursDisplay').html(bunoEle.data('budgetedHours'))
+    }
+}
 
 
 
@@ -844,8 +899,37 @@ function colorDateLabels(){
 function loadBunoDetails(id){
     bunoQuery(id);
     selectedBunoIndicator(id)
+    displayMxDates(id);
     $('#'+id).data('clicked', true)
 }
+
+function displayMxDates(id){
+    let bunoEle = $('#'+id)
+    let mxArray = bunoEle.data('mxItemsDates')
+    let mxEle = ''
+    for(i=4; i<10;++i){
+        if(i==4){
+            mxEle=$('#eightyFourDayDateDisplay')
+        }else if(i==5){
+            mxEle=$('#oneTwelverDateDisplay')
+        }else if(i==6){
+            mxEle=$('#oneSixEightDateDisplay')
+        }else if(i==7){
+            mxEle=$('#threeThreeSixDateDisplay')
+        }else if(i==8){
+            mxEle=$('#threeSixFiveDateDisplay')
+        }else if(i==9){
+            mxEle=$('#seventTwoEightDateDisplay')
+        }
+        mxEle.html(mxArray[i])
+
+    }
+
+
+}
+
+
+
 function bunoQuery(id){
     let selectedBuno = id.slice(5,11);
 
@@ -865,6 +949,7 @@ function bunoQuery(id){
 
 }
 function displayBunoDynInfo(inputArray){
+    clearLeftInfoPanel()
     let buno=inputArray[0][0];
     $('#bunoDisplay').html(buno);
     let rudderActuator = inputArray[0][5];
@@ -879,6 +964,19 @@ function displayBunoDynInfo(inputArray){
     $('#f404CombustionSectionDisplay').html(f404Combustionhours);
     let currentlyScheduledHours = $('#label'+buno).data('budgetedHours')
     $('#currentlyScheduledHoursDisplay').html(currentlyScheduledHours)
+    let bunoEle = $('#label'+buno)
+    if(bunoEle.data('phaseDate')){
+       $('#nextPhaseDateScheduledDisplay').html(bunoEle.data('phaseDate').slice(0,2)+'/'+bunoEle.data('phaseDate').slice(2,4))
+    }else if(bunoEle.data('rudderActDate')){
+        $('#rudderActuatorDateScheduledDisplay').html(bunoEle.data('rudderActDate'))
+    }else if(bunoEle.data('stabActDate')){
+        $('#stabActuatorDateScheduledDisplay').html(bunoEle.data('stabActDate'))
+    }else if(bunoEle.data('f404Date')){
+        $('#f404dateScheduledDisplay').html(bunoEle.data('f404Date').slice(0,2)+'/'+bunoEle.data('f404Date').slice(2,4))
+    }
+
+
+
 }
 
 function selectedBunoIndicator(id){
@@ -892,13 +990,55 @@ function selectedBunoIndicator(id){
         $('#SQDImage').data('currentlySelectedBuno', id);
 }
 
+function saveFlightSchedule(){
+    let bunoArray = $('#SQDImage').data('bunoArray')
+
+    for(i=0;i<bunoArray.length;++i){
+        let outputArray = new Array()
+        let buno = bunoArray[i]
+        let bunoFlightSchedule =$('#label'+buno).data('flightSchedule')
+        let outputFlightArray = new Array()
+        outputFlightArray.push(buno)
+        for(j=0; j<bunoFlightSchedule.length;++j){
+            outputFlightArray.push(bunoFlightSchedule[j])
+            saveFlightScheduleQuery(outputFlightArray)
+        }
 
 
-function testFunction(){
-colorDateLabels()
+
+    }
 
 }
+function saveFlightScheduleQuery(inputArray){
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            console.log(JSON.parse(xhttp.responseText))
+        }
+    };
+
+    xhttp.open("POST", "scripts/saveFlightScheduleQuery.php", true);
+    xhttp.send(JSON.stringify(inputArray));
+
+
+}
+function storeMxDates(mxArray){
+    let numberOfBunos = mxArray.length
+    for(i=0;i<numberOfBunos;++i){
+        let buno = mxArray[i][0];
+        let bunoEle = $('#label'+buno)
+        bunoEle.data('mxItemsDates',mxArray[i])
+    }
+
+}
+
+function testFunction(){
+    console.log($('#label123456').data())
+//saveFlightSchedule()
+}
 function testFunction2(){
-    console.log($('#date0205').data())
+    $(document).tooltip()
+    //console.log($('#label123456').data())
 
 }
