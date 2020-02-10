@@ -39,7 +39,7 @@
                         <div id="nextPhase">
                             Next Phase
                             <div id="nextPhaseDisplay">
-                                -
+                                B
                             </div>
                         </div>
                         <div id="nextPhaseDateScheduled">
@@ -132,7 +132,7 @@
                     </div>
                 </section>
                 <section id="bunoMXInfo">
-                    Test
+                    <img id="mockup" src="sqdImages/req.png">
                 </section>
         </section>
         <section id="kpiFilterDisplay">
@@ -147,21 +147,27 @@
                         </select>
                     </section>
                     <section id="kpiOne">
-                        Test
+                        Aircraft Mission Capable<br>
+                        6
                     </section>
                     <section id="kpiTwo">
-                        Test
+                        Number of Aircraft Needed For Ops<br>
+                        5
                     </section>
                 </section>
                 <section id="bottomKPIrow">
                     <section id="kpiThree">
-                        Test
+                        Number of Flight Hours Scheduled<br>
+                        22
                     </section>
                     <section id="kpiFour">
-                        Test
+                        Number of Aircraft in Maintenance<br>
+                        2
                     </section>
                     <section id="kpiFive">
-                        TEst
+                        Date Selected:<br>
+                        Feb 12, 2020
+
                     </section>
                 </section>
             </section>
@@ -174,23 +180,36 @@
                     <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox1" id="checkbox1">
                     <label for="checkbox1">Air to Air</label>
                     <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox2" id="checkbox2">
-                    <label for="checkbox2">Package 2</label>
+                    <label for="checkbox2">Air to Ground</label>
                     <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox3" id="checkbox3">
-                    <label for="checkbox3">Package 3</label>
+                    <label for="checkbox3">Airborne Refueling</label>
                     <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox4" id="checkbox4">
-                    <label for="checkbox4">Package 4</label>
+                    <label for="checkbox4">Command and Control</label>
                     <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox5" id="checkbox5">
-                    <label for="checkbox5">Package 5</label>
+                    <label for="checkbox5">Close Air Support</label>
                 </span>
             </section>
         </section>
         <section id="mxDisplay">
                 <section id="detDisplay">
+                    Flight Tool
                     <button id="expectedFlightDateButton" onclick="expectedFlightDateTool()">
                         <i class="material-icons">flight_takeoff</i>
-
                     </button>
                     <input id="efdHoursSpinner">
+                    Legend:
+                    Mission Capable-
+                    <i class="material-icons">airplanemode_active</i>
+                    Not Mission Capable-
+                    <i class="material-icons"> airplanemode_inactive</i>
+                    Maintenance Window-
+                    <i class="material-icons">build</i>
+                    Flight Scheduled(hours)-
+                    <i class="material-icons">flight_takeoff</i>x
+                    Dynamic Component Due-
+                    <i class="material-icons">access_time</i>
+                    Original MX Date-
+                    <i class="material-icons">compare_arrows</i>
                 </section>
                 <section id="calendarDisplay">
                         <div id="bunoLabel">

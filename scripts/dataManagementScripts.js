@@ -1034,8 +1034,8 @@ function storeMxDates(mxArray){
 }
 
 function testFunction(){
-    console.log($('#label123456').data())
-//saveFlightSchedule()
+    //console.log($('#label123456').data())
+saveFlightSchedule()
 }
 function testFunction2(){
     $(document).tooltip()
