@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="libraries/jquery-ui.css">
     <link rel="stylesheet" href="libraries/jquery-ui.theme.css">
     <link rel= "stylesheet" href="mxPlanning CSS/pageStyling.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
 </head>
 <body onload="initialLoading()">
     <section id="pageContainer">
@@ -14,20 +18,127 @@
             Maintenance Planning Tool
         </section>
         <section id="leftInfoPanel">
-                <section id="mxEventsOnDate">
-                    Test
+                <section id="dynamicComponentDisplay">
+                    <section id="BUNO">
+                        BUNO<br>
+                        <div id="bunoDisplay">
+                            -
+                        </div>
+                    </section>
+                    <section id="totalFlightHours">
+                        Total Flight Hours<br>
+                        <div id="totalFlightHoursDisplay">
+                            -
+                        </div>
+                    </section>
+                    <section id="phase">
+                        Hours Until Next Phase<br>
+                        <div id="phaseHoursDisplay">
+                            -
+                        </div>
+                        <div id="nextPhase">
+                            Next Phase
+                            <div id="nextPhaseDisplay">
+                                B
+                            </div>
+                        </div>
+                        <div id="nextPhaseDateScheduled">
+                            Date Scheduled
+                            <div id="nextPhaseDateScheduledDisplay">
+                                -
+                            </div>
+                        </div>
+                    </section>
+                    <section id="rudderActuator">
+                        Hours remaining on Rudder Actuator<br>
+                        <div id="rudderActuatorDisplay">
+                            -
+                        </div>
+                        <div id="rudderActuatorDateScheduled">
+                            Date Scheduled
+                            <div id="rudderActuatorDateScheduledDisplay">
+                                -
+                            </div>
+                        </div>
+                    </section>
+                    <section id="stabActuator">
+                        Hours Remaining on Stab Actuator<br>
+                        <div id="stabActuatorDisplay">
+                            -
+                        </div>
+                        <div id="stabActuatorDateScheduled">
+                            Date Scheduled
+                            <div id="stabActuatorDateScheduledDisplay">
+                                -
+                            </div>
+                        </div>
+                    </section>
+                    <section id="f404CombustionSection">
+                        Hours Remaining on F404 Combustion Section<br>
+                        <div id="f404CombustionSectionDisplay">
+                            -
+                        </div>
+                        <div id="f404dateScheduled">
+                            Date Scheduled
+                            <div id="f404dateScheduledDisplay">
+                                -
+                            </div>
+                        </div>
+                    </section>
+                <section id="currentlyScheduledHours">
+                    Currently Scheduled Hours
+                    <div id="currentlyScheduledHoursDisplay">
+                        -
+                    </div>
                 </section>
-                <section id="bunoConfigInfo">
-                    Test
+
+                </section>
+                <section id="mxDateDisplay">
+                    <div class="calendarMxDisplay" id="eightyFourDay">
+                        84 Day Scheduled For
+                        <div class="calendarMxDateDisplay" id="eightyFourDayDateDisplay">
+                            -
+                        </div>
+                    </div>
+                    <div class="calendarMxDisplay" id="oneTwelveDay">
+                        112 Day Scheduled For
+                        <div class="calendarMxDateDisplay" id="oneTwelverDateDisplay">
+                            -
+                        </div>
+                    </div>
+                    <div class="calendarMxDisplay" id="oneSixEightDay">
+                        168 Day Scheduled For
+                        <div class="calendarMxDateDisplay" id="oneSixEightDateDisplay">
+                            -
+                        </div>
+                    </div>
+                    <div class="calendarMxDisplay" id="threeThreeSixDay">
+                        336 Day Scheduled For
+                        <div class="calendarMxDateDisplay" id="threeThreeSixDateDisplay">
+                            -
+                        </div>
+                    </div>
+                    <div class="calendarMxDisplay" id="threeSixFiveDay">
+                        365 Day Scheduled For
+                        <div class="calendarMxDateDisplay" id="threeSixFiveDateDisplay">
+                            -
+                        </div>
+                    </div>
+                    <div class="calendarMxDisplay" id="sevenTwoEightDay">
+                        728 Day Scheduled For
+                        <div class="calendarMxDateDisplay" id="seventTwoEightDateDisplay">
+                            -
+                        </div>
+                    </div>
                 </section>
                 <section id="bunoMXInfo">
-                    Test
+                    <img id="mockup" src="sqdImages/req.png">
                 </section>
         </section>
         <section id="kpiFilterDisplay">
             <section id="SQDImageKPIs">
                 <section id="SQDImageContainer">
-                    <img id="SQDImage" src="sqdImages/f18.jpg">
+                    <img id="SQDImage" src="sqdImages/nawcad.png">
                 </section>
                 <section id="topKPIrow">
                     <section id="sqdDropdown">
@@ -36,37 +147,81 @@
                         </select>
                     </section>
                     <section id="kpiOne">
-                        Test
+                        Aircraft Mission Capable<br>
+                        6
                     </section>
                     <section id="kpiTwo">
-                        Test
+                        Number of Aircraft Needed For Ops<br>
+                        5
                     </section>
                 </section>
                 <section id="bottomKPIrow">
                     <section id="kpiThree">
-                        Test
+                        Number of Flight Hours Scheduled<br>
+                        22
                     </section>
                     <section id="kpiFour">
-                        Test
+                        Number of Aircraft in Maintenance<br>
+                        2
                     </section>
                     <section id="kpiFive">
-                        TEst
+                        Date Selected:<br>
+                        Feb 12, 2020
+
                     </section>
                 </section>
             </section>
             <section id="filters">
-                Test
+                <button onclick="saveSubmit()" id="saveTemplateButton">Save and Submit MX Schedule</button>
+                <button id="loadProposedScheduleButton" onclick="loadProposedSchedule()">Load Currently Proposed Schedule</button>
+                <button id="testButton" onclick="testFunction()">Click ME for TEST</button>
+                <button id="testButton2" onclick="testFunction2(this.id)">Click ME for other TEST</button>
+                <span id="other">
+                    <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox1" id="checkbox1">
+                    <label for="checkbox1">Air to Air</label>
+                    <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox2" id="checkbox2">
+                    <label for="checkbox2">Air to Ground</label>
+                    <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox3" id="checkbox3">
+                    <label for="checkbox3">Airborne Refueling</label>
+                    <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox4" id="checkbox4">
+                    <label for="checkbox4">Command and Control</label>
+                    <input onclick="filterBunos()" type="checkbox" class="filterCheckbox" name="checkbox5" id="checkbox5">
+                    <label for="checkbox5">Close Air Support</label>
+                </span>
             </section>
         </section>
         <section id="mxDisplay">
                 <section id="detDisplay">
-                    DetDisplay
+                    Flight Tool
+                    <button id="expectedFlightDateButton" onclick="expectedFlightDateTool()">
+                        <i class="material-icons">flight_takeoff</i>
+                    </button>
+                    <input id="efdHoursSpinner">
+                    Legend:
+                    Mission Capable-
+                    <i class="material-icons">airplanemode_active</i>
+                    Not Mission Capable-
+                    <i class="material-icons"> airplanemode_inactive</i>
+                    Maintenance Window-
+                    <i class="material-icons">build</i>
+                    Flight Scheduled(hours)-
+                    <i class="material-icons">flight_takeoff</i>x
+                    Dynamic Component Due-
+                    <i class="material-icons">access_time</i>
+                    Original MX Date-
+                    <i class="material-icons">compare_arrows</i>
                 </section>
                 <section id="calendarDisplay">
                         <div id="bunoLabel">
-                        <br>
+
+                            <br>
                             BUNO
+                        <br>
+                            MODEX
                         </div>
+                        <section id="bunoLabels">
+
+                        </section>
                     <section id="bunosAndMx">
                         <span id="dateContainter">
 
