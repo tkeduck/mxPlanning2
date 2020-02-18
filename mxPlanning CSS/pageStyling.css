@@ -177,11 +177,6 @@ Below is the left information panel styling
     width: 100%;
 }
 
-#date0212{
-    background-color: tan;
-    color: black;
-}
-
 #bunoMXInfo{
     grid-area: bunoMXInfo;
     background-color: #454545;
@@ -252,7 +247,7 @@ Top KPIs
     text-align: center;
     font-size: 35px;
     width: 335px;
-    color: green;
+    color: #e9e9e9;
 }
 #kpiTwo{
     grid-area: kpiTwo;
@@ -296,21 +291,20 @@ Bottom KPIs
     width: 335px;
 }
 #testButton{
-    display: none;
+    display: block;
 }
 #testButton2{
-    display: none;
+    display: block;
 }
 #kpiFour{
     grid-area: kpiFour;
-    background-color: #454545;
     background-color: #454545;
     border: solid;
     border-radius: 30px;
     text-align: center;
     font-size: 35px;
     width: 335px;
-    color: yellow;
+    color: #e9e9e9;
 }
 
 #kpiFive{
